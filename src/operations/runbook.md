@@ -210,9 +210,10 @@ funds the sponsorship.
 
 The caller is an account whose key is in the SDK's client store (`PORT0_STORE`,
 default `port0-registry`), or the account named by `PORT0_OPERATOR`.
-`PORT0_REGISTRY_ID` selects the registry, and `PORT0_FEE_FAUCET_ID` is the chain
-fee faucet. The caller must hold the chain fee asset; the script prints the
-address and the amount when the balance is short.
+`PORT0_REGISTRY_ID` selects the registry, `PORT0_FEE_FAUCET_ID` is the chain
+fee faucet, `MIDEN_RPC_URL` selects the node, and `PORT0_PROVER` selects the
+prover (`testnet` by default). The caller must hold the chain fee asset; the
+script prints the address and the amount when the balance is short.
 
 The registry target sweeps the register fees the registry holds, in the chain fee
 asset. The pool target sweeps the protocol pot of one pool, in the pool's two
