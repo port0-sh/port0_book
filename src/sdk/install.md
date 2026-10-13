@@ -3,12 +3,12 @@
 The SDK is published as `@port0.sh/sdk`.
 
 ```sh
-npm install @port0.sh/sdk @miden-sdk/miden-sdk@0.17.1
+npm install @port0.sh/sdk @miden-sdk/miden-sdk
 ```
 
-The SDK peers on `@miden-sdk/miden-sdk` and is developed and tested against
-`0.17.1`. Pin the exact version the testnet runs. A client talks only to a node
-with the same major and minor version, so the two move together.
+The SDK peers on `@miden-sdk/miden-sdk`. Pin the version the testnet runs; a
+client talks only to a node with the same major and minor version. The
+manifests in each repository carry the current pins.
 
 ## Artifacts
 

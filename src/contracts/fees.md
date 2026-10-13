@@ -75,3 +75,26 @@ but cannot redirect it.
 
 The pool collect note reverts when the pot is empty. The registry collect note
 reverts when the registry holds none of the requested asset.
+
+## Sweeping the fees
+
+The SDK ships a sweep for both pots:
+
+```sh
+npm run fees:collect -- registry --submit
+npm run fees:collect -- pool <pool-id> --submit
+```
+
+Without `--submit` the command is a dry run. It reports what is claimable, the
+destination, and the cost to the caller, and submits nothing.
+
+Each sweep emits the collect note and a FEE_SPONSORSHIP note for it. The
+sponsorship is required: a collect note sweeps the whole balance of the asset it
+pays out, so the pool or registry vault is empty by the time the transaction fee
+is settled. The sponsorship carries the fee, and the caller pays it.
+
+The registry sweep moves the register fees the registry holds, in the chain fee
+asset. The pool sweep moves one pool's protocol pot, in the pool's two tokens.
+The caller is an account whose key is in the SDK's client store, and it must
+hold the chain fee asset. The [runbook](../operations/runbook.md) covers the
+environment and the wait window.

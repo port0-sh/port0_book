@@ -1,10 +1,11 @@
 # Network
 
-port0.sh runs on [Miden](https://docs.miden.xyz/builder/) testnet 0.17.1.
+port0.sh runs on [Miden](https://docs.miden.xyz/builder/) testnet. The version
+the testnet runs is published at
+[status.testnet.miden.io](https://status.testnet.miden.io/).
 
 | Fact | Value |
 | --- | --- |
-| Protocol and testnet version | 0.17.1 |
 | RPC | `https://rpc.testnet.miden.io` (gRPC, `miden.node.v1.NodeService`) |
 | Remote prover | `https://tx-prover.testnet.miden.io` |
 | Chain fee faucet | `0x4cbdcaffe75f0a317482224dae6436` |
@@ -16,21 +17,12 @@ port0.sh runs on [Miden](https://docs.miden.xyz/builder/) testnet 0.17.1.
 
 A client talks only to a node of the same major and minor version. A stale minor
 fails with errors that look like application bugs, such as a missing procedure
-root, a null pointer passed to Rust, or a missing account header record. Pin
-every `@miden-sdk/*` and `miden-node-proto` dependency to the exact version the
-testnet runs, and bump them together.
+root, a null pointer passed to Rust, or a missing account header record.
 
-| Package | Version |
-| --- | --- |
-| `@miden-sdk/miden-sdk` | 0.17.1 |
-| `@miden-sdk/miden-wallet-adapter-base` | 0.17.0 |
-| `@miden-sdk/miden-wallet-adapter-miden` | 0.17.0 |
-| `@miden-sdk/para` | 0.17.0 |
-| `@getpara/web-sdk` | 3.18.0 |
-| `@port0.sh/sdk` | 0.1.0 |
-| Guest `miden` SDK | 0.15.0 |
-| `miden-protocol`, `miden-tx`, `miden-standards` | 0.17.1 |
-| VM crates | 0.35.0 |
+Pin every `@miden-sdk/*` and `miden-node-proto` dependency to the version the
+testnet runs, and bump them together. The manifests carry the current pins:
+`package.json` and `package-lock.json` in the SDK and the app, `Cargo.toml` and
+`Cargo.lock` in the contracts and the indexer.
 
 ## Fees and notes
 

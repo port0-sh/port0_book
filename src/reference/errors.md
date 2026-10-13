@@ -14,7 +14,7 @@ Protocol and integration errors seen in operation, with the cause and the fix.
 | `advice stack read failed` on a multisig | A two-word fee-conversion preimage where three words are read | Build the three-word `MultisigAuthArgs` |
 | `account's ... component reuses the fee conversion salt ...` | No salt declared for a multisig | Declare a fresh salt, or the full `MultisigAuthArgs` |
 | `storage root not found ... slot ... block` | Declaring specific storage slots on a public foreign account | Use empty storage requirements; a public target resolves lazily |
-| `SummaryAnchorMismatchError ...` | The wallet captures a chain anchor at its own sync height while a 0.17 multisig summary binds the request's bound block | Sync the wallet immediately before the build. Retry rebuilds the request at a fresh tip |
+| `SummaryAnchorMismatchError ...` | The wallet captures a chain anchor at its own sync height while a multisig summary binds the request's bound block | Sync the wallet immediately before the build. Retry rebuilds the request at a fresh tip |
 | `private account ... cannot be retrieved` | Importing a private account | Private accounts are not importable |
 | `invalid amount: 250,000` | An amount parser rejects grouping commas while a formatter emits them | Strip commas in the parser |
 | `Cannot access 'x' before initialization` | A render helper runs before a `const` or `let` it reads is initialized | Declare the variable above the first call |

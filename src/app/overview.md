@@ -74,7 +74,7 @@ The deploy step of pool creation is an exception: the pool is a network account
 without a key. The wallet sends a small chain fee asset note to the pool
 address, and the app's own client consumes that note as the pool's first
 transaction, which commits the account and pays its first fee. There is no
-scriptless deploy, because the 0.17 network auth rejects a transaction with no
+scriptless deploy, because the network auth rejects a transaction with no
 effect.
 
 ## Branding

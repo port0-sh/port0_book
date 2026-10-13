@@ -9,8 +9,8 @@ How to stand up the stack and deploy a pool. Four repositories take part.
 | `port0_indexer` | Rust indexer: reads the registry and pools over node RPC, serves HTTP |
 | `port0_app` | Static web app: browse pools, trade, provide liquidity, create pools |
 
-Testnet version: 0.17.1. Every `@miden-sdk/*` and `miden-node-proto` pin matches
-it.
+Pin every dependency to the version the testnet runs. The manifests carry the
+current pins.
 
 ## Part 1: one-time operator setup
 
@@ -188,6 +188,40 @@ await xyk.registerPool(
   { submit: true, waitForConfirmation: true },
 );
 ```
+
+## Sweeping fees
+
+Two permissionless sweeps move protocol fees to the fee recipient. The SDK runs
+both:
+
+```sh
+npm run fees:collect -- registry --submit
+npm run fees:collect -- pool <pool-id> --submit
+```
+
+Without `--submit` the command is a dry run. It reports what is claimable, where
+it would go, and what the sweep costs the caller, and submits nothing.
+
+Each sweep emits a collect note and a FEE_SPONSORSHIP note for it. The
+sponsorship carries the transaction fee. A collect note sweeps the whole balance
+of the asset it pays out, so the pool or registry vault is empty by the time the
+transaction fee is settled. The sponsorship is what pays it, and the caller
+funds the sponsorship.
+
+The caller is an account whose key is in the SDK's client store (`PORT0_STORE`,
+default `port0-registry`), or the account named by `PORT0_OPERATOR`.
+`PORT0_REGISTRY_ID` selects the registry, and `PORT0_FEE_FAUCET_ID` is the chain
+fee faucet. The caller must hold the chain fee asset; the script prints the
+address and the amount when the balance is short.
+
+The registry target sweeps the register fees the registry holds, in the chain fee
+asset. The pool target sweeps the protocol pot of one pool, in the pool's two
+tokens.
+
+If the node's network transaction builder has not consumed the collect note
+within `PORT0_PAYOUT_WAIT_SECS` (default 90), the script executes and submits
+that same transaction itself. Funding and payout waits use `PORT0_WAIT_SECS`
+(default 600).
 
 ## Failure conditions
 

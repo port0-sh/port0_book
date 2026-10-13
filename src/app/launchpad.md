@@ -18,7 +18,7 @@ received funds. The supply mint follows as the second transaction.
 
 | Field | Rule |
 | --- | --- |
-| Symbol | 3 to 6 uppercase ASCII letters. The 0.17 protocol rejects digits. |
+| Symbol | 3 to 6 uppercase ASCII letters. The protocol rejects digits. |
 | Decimals | Integer from 0 to 8 |
 | Initial supply | Entered in tokens, bounded by `MAX_AMOUNT` of `2^57` base units |
 
@@ -28,7 +28,7 @@ intermediates and 10,000 bps fee headroom.
 ## Network note fees
 
 Network note fees are denominated in the chain's fee asset, paid to the chain's
-own fee faucet. Since 0.17 the node never runs network transactions for an
+own fee faucet. The node never runs network transactions for an
 account whose fee asset differs from the chain's protocol configuration, so the
 app reads the faucet from the client instead of asking the user. The creator's
 wallet must hold the chain fee asset to pay network note fees when acting on a

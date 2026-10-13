@@ -88,7 +88,7 @@ ownOutputNotesRequest(
 ```
 
 The function builds one `TransactionRequest` with `notes` as own output notes,
-plus the 0.17 machinery a wallet-executed multisig request needs:
+plus the machinery a wallet-executed multisig request needs:
 
 - A three-word `MultisigAuthArgs` preimage,
   `[boundBlock, 0, 0, 0] || SALT || CONVERSION_INFO` (12 felts), committed with
@@ -101,6 +101,33 @@ plus the 0.17 machinery a wallet-executed multisig request needs:
 
 Notes are pushed rather than constructor-consumed so the caller keeps valid
 `Note` references.
+
+### Local signer
+
+```ts
+outputNotesRequest(
+  client: MidenClient,
+  notes: Note[],
+  targetAccountId: AccountId,
+): Promise<TransactionRequest>
+```
+
+The twin of `ownOutputNotesRequest`, for an account whose key the client holds.
+The wallet variant declares the multisig `MultisigAuthArgs` preimage a wallet
+reads. A local account signs instead, and the client attaches the signature and
+the conversion info it fetched itself. Declaring the multisig preimage for a
+local sender puts two conversion infos in play, and the kernel rejects the
+transaction. This variant declares no auth args and no block numbers.
+
+The target account is still declared as a foreign account, so the kernel prices
+the emitted network note through `estimate_note_fee`.
+
+### Note execution hint
+
+Every network note the SDK builds carries `NoteExecutionHint.always()` on its
+`NetworkAccountTarget` attachment. A target built without the hint emits
+`NoteExecutionHint::None`, which tells the node not to schedule the note, and
+the note is never consumed.
 
 ## Pool and registry creation
 
@@ -127,7 +154,7 @@ is computed through the same path as `createPoolAccount`, so it cannot drift
 from a deployed pool.
 
 `deployPoolAccount` consumes the funding note as the pool's first transaction.
-The 0.17 network auth rejects a transaction with no effect, so a scriptless
+The network auth rejects a transaction with no effect, so a scriptless
 deploy fails. The pool id is passed to `transactions.consume` as a hex string,
 not as an `AccountId`, because the client re-parses account references
 worker-side.

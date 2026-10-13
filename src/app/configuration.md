@@ -46,7 +46,7 @@ The browser fetches the indexer cross-origin in development, so the indexer's
 In development the RPC is reached through a same-origin proxy (`/rpc.Api`,
 configured in `vite.config.ts`), so the browser never sends cross-origin
 gRPC-web requests. Production builds talk to the RPC directly. The app targets
-the 0.17 testnet.
+the testnet.
 
 ## SDK dependency
 

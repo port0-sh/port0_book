@@ -2,16 +2,14 @@
 
 # port0.sh
 
-port0.sh is an open-source exchange built on Miden. A constant-product automated
-market maker holds a pair of fungible assets in a pool, prices them by the
-product of the two reserves, and lets any account trade, deposit, or withdraw
-against the pool. Any token can dock.
+port0 is an open source exchange on Miden, a safe harbor for any token. There is
+no sign-up, no approval, and no gatekeeper. Trade anything, or open a pool for
+any token. No one can stop you or shut it down.
 
-The name comes from three places. A program that binds to port 0 asks the
-operating system for any free port. A free port is a harbor where any ship can
-dock. A free port charges no customs duties: goods land and leave without a tax.
-The third meaning is the product. The registry accepts a code commitment and
-lists the pool. There is no customs house.
+Everything is public: the contracts, the SDK, and the indexer. Run your own
+copy.
+
+Write to [hello@port0.sh](mailto:hello@port0.sh).
 
 ## Components
 
@@ -24,9 +22,9 @@ lists the pool. There is no customs house.
 
 ## Status
 
-port0.sh runs on Miden testnet 0.17.1. The code is unaudited and no audit report
+port0.sh runs on Miden testnet. The code is unaudited and no audit report
 exists. Pools and notes are public network accounts: pool state and XYK notes are
-visible on chain. Nothing here is financial advice.
+visible on chain.
 
 ## Reading order
 
