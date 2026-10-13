@@ -1,0 +1,19 @@
+[book]
+title = "port0.sh documentation"
+description = "port0.sh is a constant-product AMM on Miden. The free port on Miden."
+authors = ["port0.sh"]
+language = "en"
+src = "src"
+
+[output.html]
+default-theme = "navy"
+preferred-dark-theme = "navy"
+no-section-label = true
+git-repository-url = "https://github.com/port0-sh/port0_book"
+git-repository-icon = "fa-github"
+edit-url-template = "https://github.com/port0-sh/port0_book/edit/main/{path}"
+site-url = "https://docs.port0.sh/"
+mathjax-support = false
+
+[output.html.search]
+limit-results = 30

@@ -1,0 +1,72 @@
+/* port0.sh theme. One palette, one theme, black and magenta on cream. */
+
+:root,
+.navy {
+    --sidebar-target-width: 300px;
+    --sidebar-width: min(var(--sidebar-target-width), 80vw);
+    --sidebar-resize-indicator-width: 8px;
+    --sidebar-resize-indicator-space: 2px;
+    --page-padding: 15px;
+    --content-max-width: 820px;
+    --menu-bar-height: 50px;
+    --mono-font: "Victor Mono", "DejaVu Sans Mono", "Liberation Mono", monospace;
+    --code-font-size: 0.875em;
+    --searchbar-margin-block-start: 5px;
+
+    --bg: #000000;
+    --fg: #fff1e8;
+
+    --sidebar-bg: #000000;
+    --sidebar-fg: #a8b6b1;
+    --sidebar-non-existant: #5f574f;
+    --sidebar-active: #f200b9;
+    --sidebar-spacer: #5f574f;
+
+    --scrollbar: #5f574f;
+
+    --icons: #a8b6b1;
+    --icons-hover: #f200b9;
+
+    --links: #00f239;
+
+    --inline-code-color: #00e4a8;
+
+    --theme-popup-bg: #000000;
+    --theme-popup-border: #5f574f;
+    --theme-hover: #002209;
+
+    --quote-bg: #002209;
+    --quote-border: #00ba2c;
+
+    --warning-border: #f200b9;
+
+    --table-border-color: #5f574f;
+    --table-header-bg: #002209;
+    --table-alternate-bg: #0a0a0a;
+
+    --searchbar-border-color: #5f574f;
+    --searchbar-bg: #000000;
+    --searchbar-fg: #fff1e8;
+    --searchbar-shadow-color: #f200b9;
+    --searchresults-header-fg: #a8b6b1;
+    --searchresults-border-color: #5f574f;
+    --searchresults-li-bg: #002209;
+    --search-mark-bg: #f200b9;
+
+    --color-scheme: dark;
+
+    --copy-button-filter: invert(70%) sepia(9%) saturate(568%) hue-rotate(120deg) brightness(93%) contrast(90%);
+    --copy-button-filter-hover: invert(28%) sepia(94%) saturate(4761%) hue-rotate(307deg) brightness(99%) contrast(101%);
+
+    --footnote-highlight: #f200b9;
+
+    --overlay-bg: rgba(0, 0, 0, 0.6);
+
+    --blockquote-note-color: #00e4a8;
+    --blockquote-tip-color: #00f239;
+    --blockquote-important-color: #f200b9;
+    --blockquote-warning-color: #f200b9;
+    --blockquote-caution-color: #f200b9;
+
+    --sidebar-header-border-color: #f200b9;
+}
