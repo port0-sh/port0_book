@@ -9,7 +9,8 @@ no application framework and no client-side router.
 | `/` | `index.html` | Browse every registered pool from the indexer |
 | `/pool.html?id=<poolid>` | `pool.html` | Pool state, swap, add liquidity, remove liquidity |
 | `/create.html` | `create.html` | Deploy a pool and register it |
-| `/about.html` | `about.html` | What the pools are, and the risks of a testnet |
+| `/about.html` | `about.html` | What port0 is, and the risks of a testnet |
+| `/media.html` | `media.html` | Mark, wordmark, colors, type, and the unfurl image |
 
 Every page carries the same chrome: the testnet notice as a strip above the
 header, dismissed once and remembered under the key that `<html data-notice-key>`

@@ -1,8 +1,6 @@
 # Network
 
-port0.sh runs on [Miden](https://docs.miden.xyz/builder/) testnet. The version
-the testnet runs is published at
-[status.testnet.miden.io](https://status.testnet.miden.io/).
+port0.sh runs on [Miden](https://docs.miden.xyz/builder/) testnet.
 
 | Fact | Value |
 | --- | --- |

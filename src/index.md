@@ -8,7 +8,7 @@ committee. Open a pool for any token, and no one can stop it.
 The code is public. Read it, copy it, or run your own.
 
 Questions go to [hello@port0.sh](mailto:hello@port0.sh), or to
-[Telegram](https://t.me/port0_sh), which is faster.
+[Telegram](https://t.me/port0_sh).
 
 ## Components
 
