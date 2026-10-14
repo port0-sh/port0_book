@@ -73,10 +73,11 @@ Two permissionless notes move value to the protocol account:
 Both destinations are fixed in registry storage. A caller can trigger a payout
 but cannot redirect it. For token0 and token1 the pool collect also resets the
 protocol pot, which its payout includes. A collect that pays nothing for a key
-is a no-op; if no key pays, the transaction has no effect and the network auth
-rejects it. When the swept key is the chain fee asset, the contract leaves the
-transaction's own fee in the vault (`tx::compute_fee`), so the epilogue always
-has enough.
+leaves that key untouched. A sweep where every key pays nothing changes no
+account state; the collect note is still consumed, so the transaction pays its
+fee and moves nothing. When the swept key is the chain fee asset, the contract
+leaves the transaction's own fee in the vault (`tx::compute_fee`), so the
+epilogue always has enough.
 
 ## Sweeping the fees
 

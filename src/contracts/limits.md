@@ -48,15 +48,16 @@ Each procedure reverts under the conditions below.
 
 ### Collect
 
-- No key produced a payout. The call is a no-op per key; a collect that pays
-  nothing in any key leaves the transaction with no effect, which the network
-  auth rejects.
+A key that pays nothing is a no-op. A sweep in which every key pays nothing
+consumes the note and moves no value. The procedure reverts only on a failed
+registry read or a malformed payout.
 
 ### Registry collect
 
 - `p2id_root` is unset.
 - The asset key is empty.
-- No key produced a payout (see above).
+
+A key that pays nothing is a no-op.
 
 ## Deadline
 

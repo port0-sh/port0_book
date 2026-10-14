@@ -106,7 +106,7 @@ tick, not inline.
 | `token0_decimals`, `token1_decimals` | number or null | Faucet decimals |
 | `fee_asset_id` | string or null | Faucet of the network note fee asset |
 | `fee_schedule` | array or absent | `{ root, amount }` per note script root; detail only |
-| `reserve0`, `reserve1` | string | Reserves, vault balances minus the protocol pot |
+| `reserve0`, `reserve1` | string | The pool's stored reserves; the vault covers these plus the protocol pot |
 | `lp_supply` | string | LP supply |
 | `k` | string | `reserve0 * reserve1` as u128 |
 | `spot_price` | number | `reserve1 / reserve0`, display only |

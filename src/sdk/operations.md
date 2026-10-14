@@ -30,6 +30,18 @@ registerPool(client, config: RegistryConfig, params: RegisterPoolParams, options
 wallet adapter. Setting `submit: true` sends the request through the
 `MidenClient`.
 
+## Sponsorship
+
+Every operation emits a FEE_SPONSORSHIP note for its feature note. The fee is
+floored at `MAX_TX_FEE`, the protocol maximum transaction fee
+(`verification_base_fee * 30`, 210 base units at the current base fee). A pool
+note can cost up to that, and the executing account must hold the actual fee at
+the epilogue, so the prepayment is always enough. The remainder stays with the
+account and a later collect sweeps it.
+
+`MAX_TX_FEE` is exported from the package, together with `MAX_AMOUNT`,
+`MINIMUM_LIQUIDITY`, and `FEE_DENOMINATOR`.
+
 ## Parameters
 
 | Operation | Fields |

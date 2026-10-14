@@ -64,8 +64,8 @@ the registry with `createRegistryAccount`, funds it, and deploys it, printing
 the registry id. No re-run is needed.
 
 A stored registry is reused only when it accepts the configured pool code
-commitment and admits both registry note kinds. A registry that predates the
-registry-collect entry is reported and a fresh registry is deployed instead.
+commitment and admits both registry note kinds. An account that fails either
+check is reported and a fresh registry is deployed instead.
 
 Wait timeout: `PORT0_WAIT_SECS` (default 600). On timeout it prints the address
 and exits. Keys and store: `~/.miden/stores/<PORT0_STORE>/`.
@@ -205,10 +205,11 @@ Without `--submit` the command is a dry run. It reports what is claimable, where
 it would go, and what the sweep costs the caller, and submits nothing.
 
 Each sweep emits a collect note and a FEE_SPONSORSHIP note for it. The
-sponsorship carries the transaction fee. A collect note sweeps the whole balance
-of the asset it pays out, so the pool or registry vault is empty by the time the
-transaction fee is settled. The sponsorship is what pays it, and the caller
-funds the sponsorship.
+sponsorship carries the collect note's prepaid fee, which is the protocol
+maximum (210 base units at the current base fee); the remainder stays in the
+account and a later sweep collects it. When the swept key is the chain fee
+asset, the contract leaves the transaction's own fee in the vault, so the
+epilogue can pay it. The caller funds the sponsorship.
 
 The caller is an account whose key is in the SDK's client store (`PORT0_STORE`,
 default `port0-registry`), or the account named by `PORT0_OPERATOR`.
@@ -217,9 +218,9 @@ fee faucet, `MIDEN_RPC_URL` selects the node, and `PORT0_PROVER` selects the
 prover (`testnet` by default). The caller must hold the chain fee asset; the
 script prints the address and the amount when the balance is short.
 
-The registry target sweeps the register fees the registry holds, in the chain fee
-asset. The pool target sweeps the protocol pot of one pool, in the pool's two
-tokens.
+The registry target sweeps the registry's whole balance of each asset the
+registry holds. The pool target sweeps one pool's protocol pot plus any credit
+above its reserves, in the pool's tokens and in any third asset the vault holds.
 
 If the node's network transaction builder has not consumed the collect note
 within `PORT0_PAYOUT_WAIT_SECS` (default 90), the script executes and submits

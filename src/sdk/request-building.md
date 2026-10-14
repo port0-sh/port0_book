@@ -31,9 +31,13 @@ Common input fields are `sender`, `poolId`, `recipient` where applicable,
 `asset1`. The note targets the registry and carries the 8-felt register layout
 with no assets.
 
-`buildRegistryCollectNote` takes `sender`, `registryId`, `assetKey`, and an
-optional `serial`. The note targets the registry and carries the 10-felt
-registry-collect layout with no assets.
+`buildCollectNote` takes `sender`, `poolId`, `assetKeys`, and an optional
+`serial`. The note targets the pool and carries the pool id, the serial, and one
+asset key per swept asset, so `6 + 4n` felts and no assets.
+
+`buildRegistryCollectNote` takes `sender`, `registryId`, `assetKeys`, and an
+optional `serial`. The note targets the registry and carries the registry id,
+the serial, and one asset key per swept asset, so `6 + 4n` felts and no assets.
 
 `buildFeeSponsorshipNote` takes `sender`, `target`, `featureNote`,
 `feeFaucetId`, `feeAmount`, and optional `reclaimer` (defaults to `sender`) and
@@ -144,9 +148,9 @@ deployRegistryAccount(client, registryId, fundingNoteId, options?): Promise<Tran
 `CreatePoolAccountParams` is `{ token0Key, token1Key, registryId, lpFeeBps,
 protocolFeeShareBps, p2idRoot?, feeFaucetId, noteFees?, seed? }`.
 `createPoolAccount` builds the pool component from the compiled package and the
-ten init slots, installs the standard `CodeInspection` component, installs the
-network auth with the fee schedule, and inserts the account into the client's
-local store. It does not deploy.
+eleven init slots, installs the standard `CodeInspection` component, installs
+the network auth with the fee schedule, and inserts the account into the
+client's local store. It does not deploy.
 
 `poolCodeCommitment` returns the account code commitment as lowercase hex,
 which is the value the registry's `accepted_code_commitments` map must hold. It
@@ -162,9 +166,10 @@ worker-side.
 `CreateRegistryAccountParams` is `{ acceptedPoolCodeCommitment, feeFaucetId,
 registerFee, protocolFeeTo, protocolFeeShareBps, allowedLpFeeBps, p2idRoot,
 seed? }`. `createRegistryAccount` seeds `accepted_code_commitments` and
-`allowed_lp_fee_bps`, prices both registry note kinds in the network auth, and
-inserts the account. `deployRegistryAccount` consumes a funding note as the
-first transaction.
+`allowed_lp_fee_bps`, prices both registry note kinds in the network auth, the
+register note at `max(registerFee, MAX_TX_FEE)` and the registry-collect note at
+`MAX_TX_FEE`, and inserts the account. `deployRegistryAccount` consumes a
+funding note as the first transaction.
 
 `createFeeFaucet` creates a public fungible faucet. It is not the pool's network
 note fee asset. A pool's `feeFaucetId` must be the chain fee faucet, or the node

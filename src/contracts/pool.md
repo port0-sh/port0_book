@@ -40,7 +40,7 @@ slot; the contract derives it from the pool's account id.
 | `burn` | Removes liquidity and burns LP tokens |
 | `swap` | Trades one asset for the other |
 | `quote_swap` | Computes a swap without modifying state |
-| `collect` | Moves the pot and any credit outside the reserves for one asset to the protocol account |
+| `collect` | Pays the vault balance above the reserves for one asset key to the protocol account |
 | `get_registry_identity` | Returns the registry pointer, token keys, and fee parameters |
 
 `get_registry_identity` returns twelve felts in the order
@@ -108,10 +108,18 @@ zero reserve returns before updating the accumulators.
 
 ## Collect
 
-`collect` reads the protocol fee destination from the registry by foreign
-procedure invocation, moves the protocol pot contents to that account as a P2ID
-note, and resets the pot. An empty pot reverts. The destination is not stored in
-the pool, so it is rotated in one place and read only on the collect path.
+`collect(asset_key, serial_num)` pays out the vault balance above the recorded
+reserves for one named asset key, to the protocol account the registry
+designates, as a P2ID note. For token0 and token1 that balance is the protocol
+pot plus any credit outside the reserves, and the pot is reset because it was
+paid. For any other key it is the whole balance, so a third asset sent to the
+pool is recoverable.
+
+When the key is the chain fee asset, the transaction's own fee is left in the
+vault with `tx::compute_fee`, so the sweep can drain the fee asset and the
+epilogue still pays. A key that pays nothing is a no-op. The destination is not
+stored in the pool, so it is rotated in one place and read only on the collect
+path.
 
 ## Configuration
 
