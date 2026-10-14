@@ -16,7 +16,7 @@ const xyk = XykClient.from(client);
 const pool = xyk.pool({
   poolId,
   feeFaucetId,
-  noteFees: { swap: 133n }, // fee schedule fixed at pool creation
+  noteFees: { swap: 210n }, // protocol maximum; fixed at pool creation
 });
 
 const state = await pool.state();

@@ -14,13 +14,14 @@ local pool list and no manual import.
 | Data | Source |
 | --- | --- |
 | Pool set | Registry `pools` map |
-| Reserves, LP supply, pot, fees, oracle | The pool's ten value slots and its vault |
+| Reserves, LP supply, pot, fees, oracle | The pool's eleven value slots and its vault |
 | Token symbols and decimals | Each faucet's `token_config` slot |
 | Note fee schedule and fee asset | The pool's `fee_asset_id` value slot and the `basic_constant_fee` schedule map |
 | Activity and 24 h aggregates | Classified reserve and pot deltas between polls |
 
-Reserves equal the vault balances of token0 and token1 minus the protocol pot,
-matching the contract's `get_reserves`.
+Reserves are the pool's stored `reserves` word, matching the contract's
+`get_reserves`. The indexer checks that the vault covers the reserves plus the
+protocol pot; a credit the contract did not create is never a reserve.
 
 ## Process shape
 

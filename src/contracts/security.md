@@ -6,8 +6,9 @@ how the contracts behave, not a guarantee of safety.
 ## Custody
 
 A pool account holds the assets. No operator holds them. Every operation is a
-note that the node consumes against the pool, and the pool's vault is the only
-store of reserves.
+note that the node consumes against the pool. Reserves are the pool's stored
+accounting; the vault is the custody backing it, and `get_reserves` asserts the
+vault covers the reserves plus the protocol pot on every read.
 
 ## No admin and no upgrade path
 
@@ -42,8 +43,8 @@ component carries a note-script allowlist, a fee policy, and the nonce handling.
 The node's transaction builder reads the allowlist to consume notes on the
 account's behalf. There is no signing key.
 
-The registry prices both of its admitted note kinds: the register note at the
-configured register fee, and the registry-collect note at zero. Every admitted
+The registry prices both of its admitted note kinds at the protocol maximum,
+the register note and the registry-collect note. Every admitted
 script root must be priced, because a root the fee policy does not price aborts
 fee estimation and the account's auth procedure rejects that note as an input.
 The allowlist is initial storage, and the procedures that mutate it are gated on

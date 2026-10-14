@@ -6,13 +6,14 @@ price oracle.
 
 ## Storage
 
-The pool component declares ten value slots.
+The pool component declares eleven value slots.
 
 | Slot | Type | Encoding |
 | --- | --- | --- |
 | `token0_asset_key` | Word | token0 asset key |
 | `token1_asset_key` | Word | token1 asset key |
 | `lp_supply` | Felt | `[supply, 0, 0, 0]` |
+| `reserves` | Word | `[reserve0, reserve1, 0, 0]` |
 | `fees` | Word | `[lp_fee_bps, protocol_fee_share_bps, 0, 0]` |
 | `p2id_root` | Word | P2ID script root used for output notes |
 | `protocol_pot` | Word | `[amount0, amount1, 0, 0]` |
@@ -21,8 +22,9 @@ The pool component declares ten value slots.
 | `block_timestamp_last` | Felt | `[timestamp, 0, 0, 0]` |
 | `registry_id` | Word | `[0, 0, suffix, prefix]` of the registry account id |
 
-Every slot except `protocol_pot` and the two accumulators is written at account
-creation. `protocol_pot` accrues as swaps happen. The LP token key is not a
+Every slot except `reserves`, `protocol_pot`, and the two accumulators is written
+at account creation. `reserves` starts at zero and is written by `mint`, `burn`,
+and `swap`; `protocol_pot` accrues as swaps happen. The LP token key is not a
 slot; the contract derives it from the pool's account id.
 
 ## Procedures
@@ -38,7 +40,7 @@ slot; the contract derives it from the pool's account id.
 | `burn` | Removes liquidity and burns LP tokens |
 | `swap` | Trades one asset for the other |
 | `quote_swap` | Computes a swap without modifying state |
-| `collect` | Moves the protocol pot to the protocol account |
+| `collect` | Moves the pot and any credit outside the reserves for one asset to the protocol account |
 | `get_registry_identity` | Returns the registry pointer, token keys, and fee parameters |
 
 `get_registry_identity` returns twelve felts in the order
@@ -48,9 +50,11 @@ registration.
 
 ## Reserves
 
-The pool does not store reserves. Reserves equal the vault balances of token0
-and token1 minus the protocol pot. The vault is the source of truth, and the
-protocol pot is the only balance the pool withholds from the curve.
+Reserves are stored accounting: the `reserves` word is authoritative, and the
+vault is the custody backing it. `get_reserves` returns the stored word and
+asserts the vault covers `reserves + protocol_pot` for both tokens on every
+read. A credit the contract did not create (a funding surplus, a stray P2ID, a
+sponsorship remainder) is never a reserve and never enters a quote.
 
 ## Mint
 

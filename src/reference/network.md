@@ -11,7 +11,10 @@ the testnet runs is published at
 | Chain fee faucet | `0x4cbdcaffe75f0a317482224dae6436` |
 | Chain fee asset | USDCX, 6 decimals |
 | Block time | about 3 seconds |
-| Measured transaction fee | about 133 base units of USDCX |
+| Base fee (`verification_base_fee`) | 7 |
+| Maximum transaction fee | 210 base units of USDCX (`7 x 30`) |
+| Measured swap transaction fee | about 119 base units of USDCX |
+| Measured collect transaction fee | about 112 base units of USDCX |
 
 ## Version rule
 
@@ -26,9 +29,12 @@ testnet runs, and bump them together. The manifests carry the current pins:
 
 ## Fees and notes
 
-Notes carry a fee, and the executing account pays it from its own vault. A
-pool's fee faucet must equal the chain's fee faucet, or the node never consumes
-the pool's notes. USDCX comes from the network faucet. Do not mint it.
+Notes carry a fee, and the executing account pays it from its own vault. The
+emitter prepays it with a FEE_SPONSORSHIP note; every pool note kind is priced
+at the protocol maximum so the prepayment always covers the charge. The
+remainder stays with the account and a later collect sweeps it. A pool's fee
+faucet must equal the chain's fee faucet, or the node never consumes the pool's
+notes. USDCX comes from the network faucet. Do not mint it.
 
 ## Node state window
 

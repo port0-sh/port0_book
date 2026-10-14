@@ -9,9 +9,9 @@ each note, the assets it carries, and the felts it reads from note storage.
 | mint-note | token0, token1 | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_lp_out` (1) |
 | burn-note | LP token | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_amount0` (1), `min_amount1` (1) |
 | swap-note | token0 or token1 | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_amount_out` (1) |
-| collect-note | none | serial (4) |
+| collect-note | none | pool id (2), serial (4), one asset key (4) per swept asset |
 | register-note | none | registry id (2), pool id (2), asset0 (2), asset1 (2) |
-| registry-collect-note | none | registry id (2), asset key (4), serial (4) |
+| registry-collect-note | none | registry id (2), serial (4), one asset key (4) per swept asset |
 
 Account ids are two felts, prefix then suffix. A serial is four felts. `deadline`
 is a block timestamp; the note reverts if the pool executes it after that time.
@@ -38,10 +38,14 @@ reverts the trade when the output would be smaller.
 
 ## collect-note
 
-Moves the pool's accrued protocol fee to the protocol account the registry
-designates. The note is permissionless: the destination is fixed in the
-registry, so a caller can only flush fees toward it. The note reverts when the
-fee pot is empty.
+Moves everything the pool's vault holds above its recorded reserves for each
+named asset key to the protocol account the registry designates. For token0 and
+token1 that is the protocol pot plus any credit outside the reserves, and the
+pot is reset because it was paid; for any other key it is the whole balance, so
+a third asset sent to the pool is recoverable. The note is permissionless: the
+destination is fixed in the registry, so a caller can only flush value toward
+it. When the key is the chain fee asset, the transaction's own fee is left in
+the vault for the epilogue.
 
 ## register-note
 
@@ -52,9 +56,11 @@ registry's `register` procedure performs the checks listed in the
 
 ## registry-collect-note
 
-Moves the registry's whole balance of one asset to the protocol account. The
-note carries the registry id, the four-felt asset key, and a serial. Like a pool
-collect, it is permissionless and the destination is fixed in storage.
+Moves the registry's whole balance of each named asset to the protocol account.
+The note carries the registry id, a serial, and one four-felt asset key per
+swept asset. Like a pool collect, it is permissionless and the destination is
+fixed in storage. The registry leaves the transaction's own fee in its vault
+when the swept key is the fee asset.
 
 ## Fee sponsorship
 
@@ -62,5 +68,5 @@ A feature note does not carry its own consumption fee. A separate
 FEE_SPONSORSHIP note carries exactly one fungible asset, the fee amount in the
 fee faucet asset, and the feature note id in its storage. The two notes are
 consumed together by the node's transaction builder. The registry-collect note
-is unsponsored and priced at zero, so the registry pays that transaction fee
-from its own vault.
+is priced at the protocol maximum and sponsored like a pool collect; the
+registry's `collect` also leaves the transaction's own fee in its vault.

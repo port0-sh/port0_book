@@ -52,9 +52,9 @@ Each function returns `bigint[]` in the exact order the note script asserts.
 | `mintNoteStorage` | 11 | pool, recipient, serial, tag, deadline, `minLpOut` |
 | `burnNoteStorage` | 12 | pool, recipient, serial, tag, deadline, `minAmount0`, `minAmount1` |
 | `swapNoteStorage` | 11 | pool, recipient, serial, tag, deadline, `minAmountOut` |
-| `collectNoteStorage` | 4 | serial |
+| `collectNoteStorage` | 6 + 4n | pool, serial, one asset key (4) per swept asset |
 | `registerNoteStorage` | 8 | registry, pool, asset0, asset1 |
-| `registryCollectNoteStorage` | 10 | registry, asset key (4), serial (4) |
+| `registryCollectNoteStorage` | 6 + 4n | registry, serial, one asset key (4) per swept asset |
 | `feeSponsorshipStorage` | 7 | feature note id (4), reclaimer `[suffix, prefix]`, reclaim height |
 
 Account ids inside layouts are `[prefix, suffix]`. The reclaimer in

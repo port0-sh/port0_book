@@ -42,7 +42,7 @@ npm run pool:commitment
 ```
 
 Prints the accepted pool code commitment, currently
-`0x51c52cca051456d35329f2add92319f6447f1437a8b716279e536c1c0f6fab09`. The value
+`0x8349554fb106b3a989119ea10dddab890c7742dc490c747268b9cd112dd06b3a`. The value
 covers the pool's full component set: the `port0` component, `CodeInspection`,
 the network-account auth, and the fee-policy components. It changes whenever any
 of those change, and the registry must be seeded with the value the deployed
@@ -58,8 +58,8 @@ npm run registry:deploy
 The tool is interactive. On first run it creates an operator wallet, prints its
 bech32 address, and polls until the fee asset arrives. It consumes the incoming
 note, then funds the registry with whatever the operator holds above the
-transaction fee, capped at `PORT0_FUND`. Send at least 134 base units to
-proceed; `1000 + 133` funds the registry at the default. The tool then builds
+transaction fee, capped at `PORT0_FUND`. Send at least 420 base units to
+proceed; `1000 + 210` funds the registry at the default. The tool then builds
 the registry with `createRegistryAccount`, funds it, and deploys it, printing
 the registry id. No re-run is needed.
 
@@ -105,8 +105,10 @@ value disables both.
 ## Part 2: deploy a pool through the app
 
 Prerequisite: the connected wallet holds USDCX. The wallet pays the pool funding
-note and the register note fee. The measured per-transaction fee is 133 base
-units.
+note and the sponsorship of the network notes it emits. Every note kind is
+priced at the protocol maximum (210 base units at the current base fee), so the
+prepayment always covers the actual charge; the measured emit and swap-execution
+fees are about 119 base units each.
 
 1. Open `/create.html` and connect the wallet.
 2. Choose the token pair. Either launch a fixed-supply token, which creates a

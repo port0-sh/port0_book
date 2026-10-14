@@ -68,10 +68,10 @@ fee faucet, or the node never consumes the pool's notes. On the Miden testnet
 the chain fee asset is USDCX. It comes from the network faucet; it is not
 minted by this project.
 
-The registry prices two note kinds in its network auth: the register note at the
-configured register fee, and the registry-collect note at zero, because
-collection is permissionless and unsponsored. The registry pays the
-registry-collect transaction fee from its own vault.
+The registry prices two note kinds in its network auth: the register note and
+the registry-collect note, both at the protocol maximum, so their sponsorships
+always cover the actual transaction fee. The registry's `collect` also leaves
+the transaction's own fee in its vault.
 
 ## Output notes and foreign calls
 

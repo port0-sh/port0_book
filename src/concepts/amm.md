@@ -7,10 +7,11 @@ consuming the reserve at a fixed price.
 
 ## Reserves and price
 
-The reserve of each token is the pool account's vault balance of that token
-minus the accrued protocol pot. The spot price of one token0 in token1 is the
-ratio of the two reserves. The pool does not store the reserves: they are read
-from the vault at each operation.
+The reserve of each token is the pool's stored `reserves` word. The vault is the
+custody backing that accounting, and the contract asserts on every read that the
+vault covers the reserves plus the accrued protocol pot. A credit the contract
+did not create is never a reserve. The spot price of one token0 in token1 is the
+ratio of the two reserves.
 
 ## Liquidity
 

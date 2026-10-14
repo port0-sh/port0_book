@@ -13,7 +13,7 @@ components](https://docs.miden.xyz/builder/smart-contracts/accounts/) and six
 | `swap-note` | note script | Trade |
 | `collect-note` | note script | Move a pool's accrued protocol fees to the protocol account |
 | `register-note` | note script | Register a pool in the registry |
-| `registry-collect-note` | note script | Move the registry's accumulated register fees to the protocol account |
+| `registry-collect-note` | note script | Move the registry's whole balance to the protocol account |
 
 The repository layout:
 

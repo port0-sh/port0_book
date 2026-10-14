@@ -48,13 +48,15 @@ Each procedure reverts under the conditions below.
 
 ### Collect
 
-- The protocol pot is empty.
+- No key produced a payout. The call is a no-op per key; a collect that pays
+  nothing in any key leaves the transaction with no effect, which the network
+  auth rejects.
 
 ### Registry collect
 
 - `p2id_root` is unset.
 - The asset key is empty.
-- The registry holds none of the asset.
+- No key produced a payout (see above).
 
 ## Deadline
 

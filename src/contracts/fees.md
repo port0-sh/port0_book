@@ -63,18 +63,20 @@ and the LP side keeps the remaining 27 base units of the fee.
 
 ## Collect
 
-Two permissionless notes move fees to the protocol account:
+Two permissionless notes move value to the protocol account:
 
 | Note | Source | Destination |
 | --- | --- | --- |
-| collect-note | The pool's `protocol_pot` | The registry's `protocol_fee_to` |
-| registry-collect-note | The registry's balance of one asset | The registry's `protocol_fee_to` |
+| collect-note | Everything the pool vault holds above its stored reserves, for each named asset key | The registry's `protocol_fee_to` |
+| registry-collect-note | The registry's whole balance, for each named asset key | The registry's `protocol_fee_to` |
 
 Both destinations are fixed in registry storage. A caller can trigger a payout
-but cannot redirect it.
-
-The pool collect note reverts when the pot is empty. The registry collect note
-reverts when the registry holds none of the requested asset.
+but cannot redirect it. For token0 and token1 the pool collect also resets the
+protocol pot, which its payout includes. A collect that pays nothing for a key
+is a no-op; if no key pays, the transaction has no effect and the network auth
+rejects it. When the swept key is the chain fee asset, the contract leaves the
+transaction's own fee in the vault (`tx::compute_fee`), so the epilogue always
+has enough.
 
 ## Sweeping the fees
 
@@ -88,13 +90,16 @@ npm run fees:collect -- pool <pool-id> --submit
 Without `--submit` the command is a dry run. It reports what is claimable, the
 destination, and the cost to the caller, and submits nothing.
 
-Each sweep emits the collect note and a FEE_SPONSORSHIP note for it. The
-sponsorship is required: a collect note sweeps the whole balance of the asset it
-pays out, so the pool or registry vault is empty by the time the transaction fee
-is settled. The sponsorship carries the fee, and the caller pays it.
+Each sweep emits the collect note and a FEE_SPONSORSHIP note for it. Every
+network note kind is priced at the protocol maximum (210 base units at the
+current base fee), so the prepayment always covers the actual transaction fee;
+the remainder stays in the account and a later collect sweeps it. The caller
+funds the sponsorship.
 
-The registry sweep moves the register fees the registry holds, in the chain fee
-asset. The pool sweep moves one pool's protocol pot, in the pool's two tokens.
-The caller is an account whose key is in the SDK's client store, and it must
-hold the chain fee asset. The [runbook](../operations/runbook.md) covers the
-environment and the wait window.
+The registry sweep moves the registry's whole balance, in the chain fee asset;
+that balance is the sponsorship remainder from registers plus any operator
+funding, not a register fee paid to the registry. The pool sweep moves one
+pool's protocol pot and any credit above its reserves, in the pool's tokens plus
+any third asset. The caller is an account whose key is in the SDK's client
+store, and it must hold the chain fee asset. The
+[runbook](../operations/runbook.md) covers the environment and the wait window.

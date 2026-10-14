@@ -37,7 +37,7 @@ wallet adapter. Setting `submit: true` sends the request through the
 | `SwapParams` | `sender`, `recipient`, `tokenIn`, `amountIn`, `slippageBps`, `deadline`, optional `serial`, `tag` |
 | `MintParams` | `sender`, `recipient`, `amount0`, `amount1`, `slippageBps`, `deadline`, optional `serial`, `tag` |
 | `BurnParams` | `sender`, `recipient`, `amountLp`, `slippageBps`, `deadline`, optional `serial`, `tag` |
-| `CollectParams` | `sender`, optional `serial` |
+| `CollectParams` | `sender`, optional `assetKeys` (defaults to every fungible asset the pool's vault holds), optional `serial` |
 | `RegisterPoolParams` | `sender`, `poolId`, `asset0`, `asset1` |
 
 ## Helpers
@@ -119,14 +119,16 @@ decodePoolState(account: Account): PoolState
 fetchPoolState(getAccount, poolId): Promise<PoolState>
 ```
 
-`decodePoolState` reads the ten value slots and the vault. Reserves equal the
-vault balances of token0 and token1 minus the protocol pot. It throws
-`NOT_A_POOL` when the token asset keys are missing or zero, and `INVARIANT` when
-a vault balance is below the recorded pot.
+`decodePoolState` reads the eleven value slots and the vault. Reserves are the
+pool's stored `reserves` word; the vault is asserted to cover the reserves plus
+the protocol pot. It throws `NOT_A_POOL` when the token asset keys are missing
+or zero, and `INVARIANT` when the vault does not cover the recorded reserves and
+protocol pot. A credit the contract did not create is never a reserve.
 
 `PoolState` fields: `accountId`, `token0Key`, `token1Key`, `token0FaucetId`,
 `token1FaucetId`, `lpSupply`, `fees` (`lpFeeBps`, `protocolFeeShareBps`),
 `registryId`, `p2idRoot`, `protocolPot` (`amount0`, `amount1`),
 `price0CumulativeLast`, `price1CumulativeLast`, `blockTimestampLast`,
-`reserve0`, `reserve1`. The protocol fee destination lives on the registry and
-is read only when the pool collects.
+`reserve0`, `reserve1`, `vaultAssetKeys` (every fungible asset the vault holds).
+The protocol fee destination lives on the registry and is read only when the
+pool collects.

@@ -52,7 +52,7 @@ seeded with the value the deployed pool produces. The SDK prints the value with
 `npm run pool:commitment`.
 
 The current accepted commitment is
-`0x51c52cca051456d35329f2add92319f6447f1437a8b716279e536c1c0f6fab09`.
+`0x8349554fb106b3a989119ea10dddab890c7742dc490c747268b9cd112dd06b3a`.
 
 ## Pool lookup
 
@@ -75,9 +75,12 @@ carry. `allowed_lp_fee_bps` holds the permitted tiers.
 
 `collect(asset_key, serial_num)` moves the registry's whole balance of
 `asset_key` to `protocol_fee_to` as a P2ID note. It is permissionless: the
-destination is fixed in storage, so a caller can only flush accumulated register
-fees toward the protocol. The procedure reverts when `p2id_root` is unset, when
-the asset key is empty, and when the registry holds none of the asset.
+destination is fixed in storage, so a caller can only flush accumulated value
+toward the protocol. When the key is the chain fee asset, the transaction's own
+fee is left in the vault (`tx::compute_fee`), so the sweep can drain the fee
+asset and the registry still pays the epilogue fee. The procedure reverts when
+`p2id_root` is unset or the asset key is empty, and is a no-op when the payout
+would be zero.
 
 ## Foreign procedure roots
 
