@@ -8,7 +8,7 @@ terms are used in this book.
 | Term | Meaning | Miden reference |
 | --- | --- | --- |
 | AMM | Automated market maker. A contract that prices an asset pair from its reserves. | |
-| XYK | The constant-product invariant `x * y = k`. | |
+| Constant product | The invariant `x * y = k`. | |
 | Berth | A pool. A single account holding two assets. | |
 | Manifest | The registry. The account that holds the accepted pool code commitments and the pool set. | |
 | Cargo | A token. A fungible asset held or traded by a pool. | |

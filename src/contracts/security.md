@@ -24,7 +24,7 @@ or the protocol share means building and deploying a new registry account. The
 ## Public state
 
 Pools and notes are public network accounts. Pool reserves, LP supply, fees,
-pot, and oracle readings are on chain and readable by anyone. XYK notes are
+pot, and oracle readings are on chain and readable by anyone. Pool notes are
 public; the protocol does not provide private trading.
 
 ## Permissionless flows

@@ -1,6 +1,6 @@
 [book]
 title = "port0.sh documentation"
-description = "port0.sh is a constant-product AMM on Miden. The free port on Miden."
+description = "port0 is an open source exchange built on Miden. A safe harbor for any token."
 authors = ["port0.sh"]
 language = "en"
 src = "src"

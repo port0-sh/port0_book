@@ -5,7 +5,7 @@ wallet executes. This chapter describes the layers below the operations.
 
 ## Note builders
 
-Each builder returns a web-sdk `Note`. The XYK feature builders produce a public
+Each builder returns a web-sdk `Note`. The pool feature builders produce a public
 network note with a `NetworkAccountTarget` attachment to the target account.
 
 ```ts
@@ -185,6 +185,6 @@ class PoolRegistry { register(poolId); get(canonicalId); list() }
 ```
 
 `isXykPool` returns true when the account is a network account whose
-note-script allowlist contains all four XYK pool note roots. The node RPC has no
+note-script allowlist contains all four pool note roots. The node RPC has no
 account-listing-by-code-root endpoint, so chain-wide discovery belongs to the
 indexer.

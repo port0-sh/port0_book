@@ -2,14 +2,13 @@
 
 # port0.sh
 
-port0 is an open source exchange on Miden, a safe harbor for any token. There is
-no sign-up, no approval, and no gatekeeper. Trade anything, or open a pool for
-any token. No one can stop you or shut it down.
+port0 is an exchange on Miden, open to anyone. No sign-up, no approval, no
+committee. Open a pool for any token, and no one can stop it.
 
-Everything is public: the contracts, the SDK, and the indexer. Run your own
-copy.
+The code is public. Read it, copy it, or run your own.
 
-Write to [hello@port0.sh](mailto:hello@port0.sh).
+Questions go to [hello@port0.sh](mailto:hello@port0.sh), or to
+[Telegram](https://t.me/port0_sh), which is faster.
 
 ## Components
 
@@ -23,7 +22,7 @@ Write to [hello@port0.sh](mailto:hello@port0.sh).
 ## Status
 
 port0.sh runs on Miden testnet. The code is unaudited and no audit report
-exists. Pools and notes are public network accounts: pool state and XYK notes are
+exists. Pools and notes are public network accounts: pool state and pool notes are
 visible on chain.
 
 ## Reading order
