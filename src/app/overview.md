@@ -10,11 +10,13 @@ no application framework and no client-side router.
 | `/pool.html?id=<poolid>` | `pool.html` | Pool state, swap, add liquidity, remove liquidity |
 | `/create.html` | `create.html` | Deploy a pool and register it |
 | `/about.html` | `about.html` | What port0 is, and the risks of a testnet |
+| `/utils.html` | `utils.html` | One-time mint and send public note |
 | `/media.html` | `media.html` | Mark, wordmark, colors, type, and the unfurl image |
 
-Every page carries the same chrome: the testnet notice as a strip above the
+Every page carries the same parts: the testnet notice as a strip above the
 header, dismissed once and remembered under the key that `<html data-notice-key>`
-names, the footer with the copyright year, and the chart attribution. The index
+names, the footer with the copyright year and the social links, and the chart
+attribution. The index
 adds the hero drawing, the brand heading under it, a link to the launch page,
 and the slogan.
 

@@ -174,7 +174,7 @@ funding note as the first transaction.
 `createFeeFaucet` creates a public fungible faucet. It is not the pool's network
 note fee asset. A pool's `feeFaucetId` must be the chain fee faucet, or the node
 never consumes the pool's notes. Use the helper for application-level faucets,
-such as a launchpad token.
+such as a fixed-supply token.
 
 ## Discovery
 

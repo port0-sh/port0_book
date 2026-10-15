@@ -2,6 +2,10 @@
 
 [Introduction](index.md)
 
+# Getting started
+
+- [Open a pool](getting-started/open-a-pool.md)
+
 # Concepts
 
 - [The constant-product AMM](concepts/amm.md)
@@ -40,7 +44,7 @@
 - [Overview](app/overview.md)
 - [Configuration](app/configuration.md)
 - [Wallets](app/wallets.md)
-- [Launchpad](app/launchpad.md)
+- [Token minting](app/minting.md)
 
 # Operations
 

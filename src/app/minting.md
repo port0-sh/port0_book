@@ -1,9 +1,10 @@
-# Launchpad
+# Token minting
 
-The create page can mint a fixed-supply token before pool creation. The faucet
-is created with `maxSupply` equal to the initial supply, and the whole supply is
-minted to the creator's wallet. The launched faucet id can fill either token
-field of the pool form.
+A fixed-supply token is minted from the Utils page at `/utils.html`, with the
+One-time mint tool. The faucet is created with `maxSupply` equal to the initial
+supply, and the whole supply is minted to the caller's wallet. Nothing remains
+to mint afterwards. The faucet id can fill either token field of the create
+page's pool form.
 
 ## Funding
 
