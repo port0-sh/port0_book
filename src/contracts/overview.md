@@ -1,7 +1,7 @@
 # Contracts overview
 
-The contracts repository contains eight contracts: two [account
-components](https://docs.miden.xyz/builder/smart-contracts/accounts/) and six
+The contracts repository contains nine contracts: two [account
+components](https://docs.miden.xyz/builder/smart-contracts/accounts/) and seven
 [note scripts](https://docs.miden.xyz/builder/smart-contracts/notes/).
 
 | Contract | Kind | Purpose |
@@ -14,6 +14,22 @@ components](https://docs.miden.xyz/builder/smart-contracts/accounts/) and six
 | `collect-note` | note script | Move a pool's accrued protocol fees to the protocol account |
 | `register-note` | note script | Register a pool in the registry |
 | `registry-collect-note` | note script | Move the registry's whole balance to the protocol account |
+| `registry-config-note` | note script | Change the registry's register fee, admin only |
+
+## Pool account components
+
+A deployed pool account carries four components:
+
+| Component | Purpose |
+| --- | --- |
+| `port0` | Reserves accounting, LP supply, fee rates, protocol pot, and oracle |
+| Basic fungible faucet | LP token name, symbol, and decimals, so wallets render it |
+| `CodeInspection` | `get_code_commitment`, which the registry reads over FPI at registration |
+| Network auth | Note-script allowlist and fee schedule, plus `get_auth_identity` and `get_fee_identity` |
+
+The registry pins the auth and fee storage roots at registration, because the
+code commitment covers code and not storage. The SDK installs all four
+components.
 
 The repository layout:
 
@@ -27,6 +43,7 @@ contracts/
   collect-note/             pool protocol-fee collection note script
   register-note/            pool registration note script
   registry-collect-note/    registry fee collection note script
+  registry-config-note/     register fee configuration note script
 integration/                MockChain integration tests and deployment binaries
 ```
 

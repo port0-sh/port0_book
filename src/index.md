@@ -5,7 +5,7 @@
 port0 is an exchange on Miden, open to anyone. No sign-up, no approval, no
 committee. Open a pool for any token, and no one can stop it.
 
-The code is public. Read it, copy it, or run your own.
+The code is public and can be read, copied, or run independently.
 
 Questions go to [hello@port0.sh](mailto:hello@port0.sh), or to
 [Telegram](https://t.me/port0_sh).
@@ -21,9 +21,9 @@ Questions go to [hello@port0.sh](mailto:hello@port0.sh), or to
 
 ## Status
 
-port0.sh runs on Miden testnet. The code is unaudited and no audit report
-exists. Pools and notes are public network accounts: pool state and pool notes are
-visible on chain.
+port0.sh runs on the Miden testnet and on the Miden partner mainnet as a closed
+alpha. The code is unaudited and no audit report exists. Pools and notes are
+public network accounts: pool state and pool notes are visible on chain.
 
 ## Reading order
 

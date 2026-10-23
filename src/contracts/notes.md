@@ -12,10 +12,12 @@ each note, the assets it carries, and the felts it reads from note storage.
 | collect-note | none | pool id (2), serial (4), one asset key (4) per swept asset |
 | register-note | none | registry id (2), pool id (2), asset0 (2), asset1 (2) |
 | registry-collect-note | none | registry id (2), serial (4), one asset key (4) per swept asset |
+| registry-config-note | none | registry id (2), new register fee (1), script root (4) |
 
 Account ids are two felts, prefix then suffix. A serial is four felts. `deadline`
 is a block timestamp; the note reverts if the pool executes it after that time.
-The `min_*` fields bound slippage.
+The `min_*` fields bound slippage. A collect note carries at most four asset
+keys.
 
 ## mint-note
 
@@ -58,7 +60,15 @@ registry's `register` procedure performs the checks listed in the
 
 Moves the registry's whole balance of each named asset to the protocol account.
 The note carries the registry id, a serial, and one four-felt asset key per
-swept asset. Like a pool collect, it is permissionless and the destination is
+swept asset, and at most four keys.
+
+## registry-config-note
+
+Changes the price of the register note. The note carries the registry id, the
+new fee in the fee asset's base units, and the register note's script root. The
+registry accepts it only when the note sender equals the `admin` recorded at
+creation, and only for the register note's own schedule entry, so the price of
+permissionless collection cannot be moved through it. Like a pool collect, it is permissionless and the destination is
 fixed in storage. The registry leaves the transaction's own fee in its vault
 when the swept key is the fee asset.
 
@@ -67,6 +77,7 @@ when the swept key is the fee asset.
 A feature note does not carry its own consumption fee. A separate
 FEE_SPONSORSHIP note carries exactly one fungible asset, the fee amount in the
 fee faucet asset, and the feature note id in its storage. The two notes are
-consumed together by the node's transaction builder. The registry-collect note
-is priced at the protocol maximum and sponsored like a pool collect; the
-registry's `collect` also leaves the transaction's own fee in its vault.
+consumed together by the node's transaction builder. The registry notes are
+sponsored like a pool collect, at the schedule price; the admin's config note is
+priced at zero, because the registry pays that fee from the register fees it
+holds.

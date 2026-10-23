@@ -11,7 +11,7 @@ page's pool form.
 A fresh faucet has an empty vault and cannot pay the fee of its own first
 transaction. The connected wallet sends 0.000266 USDCX to the new faucet, which
 is exactly the two transaction fees it will pay: consume and mint, at 2 x 133
-base units, the measured testnet fee. The faucet's first transaction consumes
+base units, the measured fee. The faucet's first transaction consumes
 that note, which creates the faucet on chain and pays its fee out of the
 received funds. The supply mint follows as the second transaction.
 
@@ -24,7 +24,7 @@ received funds. The supply mint follows as the second transaction.
 | Decimals | Integer from 0 to 8 |
 | Initial supply | Entered in tokens, bounded by `MAX_AMOUNT` of `2^57` base units |
 
-The supply bound is the AMM contract's own limit: amounts are u64 with u128
+The supply bound is the port0 contract's own limit: amounts are u64 with u128
 intermediates and 10,000 bps fee headroom.
 
 ## Network note fees

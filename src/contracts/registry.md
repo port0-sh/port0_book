@@ -7,7 +7,7 @@ app.
 
 ## Storage
 
-The registry account declares seven storage slots.
+The registry account declares fifteen storage slots.
 
 | Slot | Type | Key | Value |
 | --- | --- | --- | --- |
@@ -17,7 +17,15 @@ The registry account declares seven storage slots.
 | `protocol_fee_to` | value | account id word `[0, 0, suffix, prefix]` | protocol fee destination |
 | `protocol_fee_share_bps` | value | `[bps, 0, 0, 0]` | protocol share every pool must carry |
 | `allowed_lp_fee_bps` | map | LP fee tier in bps | `1` when a pool may charge it |
-| `p2id_root` | value | P2ID script root | script root of the payout note |
+| `p2id_root` | value | P2ID script root | script root of the payout note, and the root every pool must carry |
+| `expected_note_allowlist_root` | value | root | note allowlist root every pool must carry |
+| `expected_tx_script_allowlist_root` | value | root | transaction-script allowlist root every pool must carry |
+| `expected_fee_schedule_root` | value | root | fee schedule root every pool must carry |
+| `expected_fee_asset_id` | value | asset id word | fee asset every pool must charge in |
+| `expected_active_fee_policy_root` | value | root | active fee policy root every pool must carry |
+| `expected_allowed_fee_policy_roots` | value | root | allowed fee policy roots every pool must carry |
+| `admin` | value | account id word `[0, 0, suffix, prefix]` | account allowed to change the register fee |
+| `register_note_root` | value | script root | the only script root whose fee the admin may change |
 
 Keys are four-felt words. A pool id key is `[prefix, suffix, 0, 0]`. An ordered
 asset pair is `[lo.prefix, lo.suffix, hi.prefix, hi.suffix]`, ordered by

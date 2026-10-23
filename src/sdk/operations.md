@@ -41,7 +41,13 @@ the measured amount; the executing account holds it at the epilogue. The
 remainder stays with the account and a later collect sweeps it.
 
 `NOTE_FEES` is exported from the package, together with `MAX_AMOUNT`,
-`MINIMUM_LIQUIDITY`, and `FEE_DENOMINATOR`.
+`MINIMUM_LIQUIDITY`, `FEE_DENOMINATOR`, and `MAX_TX_FEE`. `MAX_TX_FEE` is the
+protocol maximum at the current base fee, 210 base units, and scripts use it to
+size an operator's funding. It is not a note price.
+
+The collect scripts cap a note at four asset keys. Passing more keys than that
+to `collectFees` produces a note the script rejects; a vault with more fungible
+assets needs one call per four keys.
 
 ## Parameters
 

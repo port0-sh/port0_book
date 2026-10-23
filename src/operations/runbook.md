@@ -67,13 +67,25 @@ the registry with `createRegistryAccount`, funds it, and deploys it, printing
 the registry id. No re-run is needed.
 
 A stored registry is reused only when it accepts the configured pool code
-commitment and admits both registry note kinds. An account that fails either
+commitment and admits the registry note kinds. An account that fails either
 check is reported and a fresh registry is deployed instead.
+
+### 5. Register fee
+
+```sh
+npm run registry:set-fee -- <base-units> [--submit]
+```
+
+Without `--submit` the command reads the live fee and reports the change. The
+note is accepted only from the registry's admin, so the caller account
+(`PORT0_OPERATOR`, or the first non-admin account in `PORT0_STORE`) must be that
+admin. The fee is the price of listing a pool, and the registry pays the config
+note's own fee from the register fees it holds.
 
 Wait timeout: `PORT0_WAIT_SECS` (default 600). On timeout it prints the address
 and exits. Keys and store: `~/.miden/stores/<PORT0_STORE>/`.
 
-### 5. Indexer
+### 6. Indexer
 
 In the `port0_indexer` checkout:
 
@@ -92,7 +104,7 @@ The shipped `.env.example` lists the Vite dev ports, so `npm run dev` at
 `http://localhost:5173` is admitted. A deployment that serves the app and the
 API from one origin needs no entry.
 
-### 6. App
+### 7. App
 
 In the `port0_app` checkout:
 
@@ -111,8 +123,8 @@ Prerequisite: the connected wallet holds USDCX. The wallet pays the pool funding
 note and the sponsorship of the network notes it emits. Every note kind is
 priced at the measured schedule (126 base units for the pool notes, 119 for the
 registry notes at the current base fee), so the prepayment covers the actual
-charge with a one-base-unit margin; the measured emit and swap-execution fees
-are about 119 base units each.
+charge with the pricer's one-verification-cycle margin. The measured emit and
+swap-execution fees are about 119 base units each.
 
 1. Open `/create.html` and connect the wallet.
 2. Choose the token pair. Either launch a fixed-supply token, which creates a
@@ -125,7 +137,7 @@ are about 119 base units each.
 
 | Step | What happens | Who pays |
 | --- | --- | --- |
-| Create pool account | Built locally, not yet on chain. Fees, the P2ID root, and the registry pointer are initial storage; the LP token key is derived by the contract | Nothing |
+| Create pool account | Built locally, not yet on chain. Fees, the P2ID root, the registry pointer, and the LP token metadata are set at creation; the LP token key is derived by the contract | Nothing |
 | Deploy | The wallet sends 133 base units of USDCX to the pool; then the app consumes that note as the pool's first transaction | Wallet funds; the pool pays its first fee from the received funds |
 | Register | Register note via the wallet, sponsored with the registry's register fee; the node's transaction builder consumes it against the registry, which verifies the pool code commitment, the registry pointer, the token pair, and the fee values by foreign procedure invocation | Wallet |
 
@@ -156,8 +168,9 @@ const client = await MidenClient.create({
 });
 const xyk = XykClient.from(client);
 
-// 1. Build the pool account locally. Fees, the P2ID root, and the registry
-// pointer are initial storage; the LP token key is derived by the contract.
+// 1. Build the pool account locally. Fees, the P2ID root, the registry
+// pointer, and the LP token metadata are set at creation; the LP token key is
+// derived by the contract.
 const account = await xyk.createPoolAccount({
   token0Key,
   token1Key,
@@ -209,12 +222,10 @@ Without `--submit` the command is a dry run. It reports what is claimable, where
 it would go, and what the sweep costs the caller, and submits nothing.
 
 Each sweep emits a collect note and a FEE_SPONSORSHIP note for it. The
-sponsorship carries the collect note's prepaid fee, which is the measured
-schedule price (126 base units for a pool collect, 119 for a registry collect at
-the current base fee); the remainder stays in the
-account and a later sweep collects it. When the swept key is the chain fee
-asset, the contract leaves the transaction's own fee in the vault, so the
-epilogue can pay it. The caller funds the sponsorship.
+sponsorship carries the collect note's schedule price (126 base units for a pool
+collect, 119 for a registry collect at the current base fee); the remainder
+stays in the account and a later sweep collects it. The caller funds the
+sponsorship.
 
 The caller is an account whose key is in the SDK's client store (`PORT0_STORE`,
 default `port0-registry`), or the account named by `PORT0_OPERATOR`.
@@ -226,6 +237,8 @@ script prints the address and the amount when the balance is short.
 The registry target sweeps the registry's whole balance of each asset the
 registry holds. The pool target sweeps one pool's protocol pot plus any credit
 above its reserves, in the pool's tokens and in any third asset the vault holds.
+A vault with more than four fungible assets is swept in one note per four keys,
+because the collect note script caps its key count.
 
 If the node's network transaction builder has not consumed the collect note
 within `PORT0_PAYOUT_WAIT_SECS` (default 90), the script executes and submits

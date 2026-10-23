@@ -25,6 +25,7 @@ The message string matches the contract's `PoolMathError`.
 | `POOL_NOT_FOUND` | The account or registry is not in the local store |
 | `POOL_NOT_CONFIGURED` | A required pool slot is missing |
 | `MISSING_SLOT` | A named storage slot is absent |
+| `AUTH_SLOT_MISSING` | A storage slot of the pool's auth component is absent, so the registry cannot pin its roots |
 | `INVARIANT` | The vault does not cover the recorded reserves and protocol pot |
 | `INVALID_ARGUMENT` | A parameter is out of range or inconsistent |
 | `UNSUPPORTED_OPERATION` | The requested operation has no implementation |

@@ -1,31 +1,29 @@
 # Open a pool
 
-A token with no market can have one in about ten minutes. This chapter is the
-whole flow, from holding a token to having a pool that trades.
+A token with no market acquires one in about ten minutes. This chapter covers the
+whole flow, from holding a token to holding a pool that trades.
 
-## What you need
+## What the flow requires
 
 1. A wallet the app can connect to, holding USDCX.
-2. A token. If you do not have one, the app mints one in the next section.
+2. A token. When none exists, the Utils page mints one in the next section.
 3. Nothing else. There is no application and no approval.
 
-## 1. Get USDCX
+## 1. Acquire USDCX
 
 Every transaction on Miden pays a fee in the chain's fee asset. On testnet that
-is USDCX.
+asset is USDCX, issued by the faucet at
+[faucet.testnet.miden.io](https://faucet.testnet.miden.io). The faucet takes a
+wallet address, sends a public note, and the wallet turns the note into a
+spendable balance.
 
-Get it from the faucet at
-[faucet.testnet.miden.io](https://faucet.testnet.miden.io). Enter the wallet
-address, claim the tokens, and the faucet sends a public note. Claim the note in
-the wallet and the balance is spendable.
+USDCX pays the network fees for every step below. The pool does not require USDCX
+as the second side of the trade: any two tokens can form a pair.
 
-USDCX pays the network fees for every step below. It is needed here as the fee
-asset, not as the other side of the trade. A pool can pair any two tokens, and
-the second token does not have to be USDCX.
+## 2. Mint a token, when none exists
 
-## 2. Make a token, if you do not have one
-
-Open [port0.sh/utils.html](https://port0.sh/utils.html) and choose One-time mint.
+The One-time mint tool at [port0.sh/utils.html](https://port0.sh/utils.html)
+creates a fixed-supply faucet and mints the whole supply to the wallet.
 
 ![The Utils page with the One-time mint panel outlined](utils.png)
 
@@ -34,90 +32,90 @@ Open [port0.sh/utils.html](https://port0.sh/utils.html) and choose One-time mint
 | Symbol | 3 to 12 uppercase letters. The protocol rejects digits |
 | Name | Optional, up to 32 characters; empty uses the symbol |
 | Decimals | 0 to 8 |
-| Supply | the whole supply, minted to your wallet in the same flow |
+| Supply | The whole supply, minted in the same flow |
 
 The faucet is created with `maxSupply` equal to the supply, so nothing remains to
-mint afterwards. The whole supply ends up in your wallet.
+mint afterwards and the whole supply lands in the wallet.
 
-This step creates two transactions and needs 266 base units of USDCX, which the
-wallet sends to the new faucet. The faucet's own first transaction pays its own
-fee out of that funding.
+The step creates two transactions and needs 266 base units of USDCX, which the
+wallet sends to the new faucet. The faucet's own first transaction pays its fee
+out of that funding.
 
 ## 3. Open the pool
 
-Open [port0.sh/create.html](https://port0.sh/create.html) and connect the wallet.
+The create page at [port0.sh/create.html](https://port0.sh/create.html) takes the
+pair and the fee tier.
 
 ![The create page with the token fields, the fee tier, and the three deploy steps outlined](create.png)
 
-| Field | What to choose |
+| Field | Value |
 | --- | --- |
-| Token 0 | your token |
+| Token 0 | The new token |
 | Token 1 | USDCX, or any second token |
 | LP fee tier | 0.05 percent, 0.30 percent, or 1.00 percent |
 
-Submit. Three steps run in order.
+Submission runs three steps in order.
 
 | Step | What happens | Who pays |
 | --- | --- | --- |
-| Create the pool account | built locally. The fee rates, the P2ID root, and the registry pointer are initial storage and hold for the pool's life | nothing |
-| Deploy | the wallet sends 133 base units of USDCX to the pool, and the app consumes that note as the pool's first transaction | the wallet |
-| Register | a register note goes to the registry, which checks the pool's code commitment, its fee values, and the pair | the wallet, plus the registry's register fee |
+| Create the pool account | Built locally. The fee rates, the P2ID root, the registry pointer, and the LP token metadata are set at creation and hold for the pool's life | Nothing |
+| Deploy | The wallet sends 133 base units of USDCX to the pool, and the app consumes that note as the pool's first transaction | The wallet |
+| Register | A register note goes to the registry, which checks the pool's code commitment, its fee values, and the pair | The wallet, plus the registry's register fee |
 
 The register fee on testnet is 119 base units of USDCX. The create page reads it
-from the registry and shows it before you submit.
+from the registry and shows it before submission.
 
 When the third step lands, the page opens the pool's own page.
 
-## 4. Give the pool liquidity
+## 4. Provide liquidity
 
-A pool with no reserves has no market. Nobody can trade against it, and it will
-not appear useful in the list.
+A pool with no reserves has no market. No trade can execute against it, and it
+reads as an empty pair in the list.
 
-On the pool page, deposit both tokens. The pool mints LP tokens to your wallet in
-proportion to your share. After that deposit, the pool has a price, and a swap
-against it changes the price.
+The pool page takes both tokens as a deposit. The pool mints LP tokens in
+proportion to the depositor's share. After the first deposit the pool has a
+price, and a swap against it moves that price.
 
 ![A pool page with the price, the 24 hour stats, and the price history outlined](pool.png)
 
-The first deposit sets the price. Deposit at the ratio you think the pair is
-worth, because the market will start there.
+The first deposit sets the price. It should be made at the ratio the pair is
+worth, because the market starts there.
 
-## What your pool costs
+## Cost
 
 | Item | Base units of USDCX |
 | --- | --- |
-| Minting a token, if you need one | 266 |
+| Minting a token, when needed | 266 |
 | Deploying the pool | 133 |
 | The register fee | 119 |
-| Network fees for each operation | about 119 per swap, about 112 per collect |
+| Network fees per operation | About 119 per swap, about 112 per collect |
 
 A pool created with an existing token costs the deploy and the register fee
 only.
 
-## What happens after
+## After the pool exists
 
-1. The pool is in the registry, and the indexer publishes it within about a
+1. The registry holds the pool, and the indexer publishes it within about a
    minute. It appears in the list on the home page with its pair, its reserves,
    and its price.
 2. The pool page carries the state, a chart, and the three actions: swap, add
    liquidity, remove liquidity.
 3. Every swap pays the LP fee into the pool. Liquidity providers hold the LP
-   token and share it.
-4. The protocol takes a share of the LP fee, fixed by the registry, and it is
-   carved out of the LP fee rather than added to the swapper's cost. The swapper
-   pays the tier and nothing more.
+   token and share in that fee.
+4. The protocol takes a share of the LP fee, fixed by the registry. The share is
+   carved out of the LP fee rather than added to the swapper's cost, so the
+   swapper pays the tier and nothing more.
 
-## If a step fails
+## When a step fails
 
 The create page keeps its state and offers **Retry** for the step that failed
-and **Restart flow**. A retry resumes at the failed step. It does not create a
-second pool, and the deploy step reuses the funding note it already sent.
+and **Restart flow**. A retry resumes at the failed step, does not create a
+second pool, and reuses the funding note the deploy step already sent.
 
-If the register step reports a summary anchor mismatch, a block landed between
-two reads. Press retry, which rebuilds the request at the current block.
+A summary anchor mismatch at the register step means a block landed between two
+reads. Retry rebuilds the request at the current block.
 
-## What the pool is not
+## What the pool is
 
-The pool account is public. Anyone can read its reserves, its history, and its
-fee rates. There is no private trading here, and the network is a testnet whose
-tokens have no value.
+The pool account is public. Its reserves, its history, and its fee rates are
+readable by anyone. The network is a testnet whose tokens have no value.

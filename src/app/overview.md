@@ -36,8 +36,26 @@ ordered by pair name so a row keeps its place between refreshes. A filter
 accepts a faucet id, and the Load more control walks the indexer's keyset
 cursor.
 
-The page needs no chain read and no WASM. Prices come from the indexer's
+The list needs no chain read and no WASM. Prices come from the indexer's
 reserves through the same exact bigint arithmetic the pool page uses.
+
+## Swap card
+
+The home page also carries a swap card. It quotes over the indexed pools without
+loading the WASM client, then executes hop by hop through the wallet.
+
+The router enumerates routes up to three hops over distinct tokens. Two pools
+cannot serve the same pair, because the registry rejects a duplicate, so each
+hop has exactly one pool. A route is ranked by output, with the direct pool
+preferred at equal output. The quote uses the indexer's last snapshot, so it is
+a quote and not a guarantee.
+
+Execution is one wallet transaction per hop. The pool consumes the swap note and
+emits a P2ID note of the output token to the sender, so the intermediate asset
+has to reach the wallet's vault before the next hop can spend it. The next hop's
+input is the amount the wallet actually received, so a reserve shift between
+hops changes only the final output. A failed hop reports its index, and a retry
+resumes at that hop. Each hop carries its own slippage bound.
 
 ## Pool page
 
@@ -103,7 +121,7 @@ element, which is where its own motion belongs.
 
 ```sh
 npm install
-npm run dev        # dev server with same-origin gRPC-web RPC proxy
+npm run dev        # dev server; the node serves the CORS headers the browser needs
 npm test           # vitest, pure-logic unit tests
 npm run typecheck  # tsc --noEmit
 npm run lint       # oxlint
@@ -111,5 +129,5 @@ npm run build      # tsc -b && vite build, output in dist/
 npm run preview    # serve dist/ locally
 ```
 
-The build output is plain static files: four HTML documents, one CSS file, one
+The build output is plain static files: six HTML documents, one CSS file, one
 small JS bundle per page, and a shared lazy chunk containing the Miden SDK.

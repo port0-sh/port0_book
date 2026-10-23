@@ -99,18 +99,17 @@ from a reference pool build by the SDK (`poolAuthRoots`).
 A pool addresses the registry's `protocol_fee_to`, and the registry addresses
 the pool's `get_registry_identity`, the pool's `get_auth_identity`, and the
 standard `get_code_commitment`, all by hard-coded MAST root. A contract edit
-that shifts a root breaks the call until the constant is updated; the registry's
-slot change for the auth check did exactly that to the pool's
-`registry_protocol_fee_to_root`. The roots are printed by the integration
-binaries (`registry_roots`, `auth_slot_ids`) and must be re-derived after a
-contract change.
+that shifts a root breaks the call until the constant is updated. The roots are
+printed by the integration binaries (`registry_roots`, `auth_slot_ids`) and must
+be re-derived after a contract change.
 
 ## Note fees
 
 Notes carry a fee, and the executing account pays it from its own vault. A
 pool's fee faucet must equal the chain's fee faucet, or the node never consumes
-the pool's notes. The chain fee asset on the testnet is USDCX. It comes from the
-network faucet and is not minted by this project.
+the pool's notes. The chain fee asset is the network's own fee faucet asset,
+USDCX on the testnet. It comes from the network faucet and is not minted by this
+project.
 
 ## Reporting
 

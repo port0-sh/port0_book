@@ -41,12 +41,21 @@ slot; the contract derives it from the pool's account id.
 | `swap` | Trades one asset for the other |
 | `quote_swap` | Computes a swap without modifying state |
 | `collect` | Pays the vault balance above the reserves for one asset key to the protocol account |
-| `get_registry_identity` | Returns the registry pointer, token keys, and fee parameters |
+| `get_auth_identity` | Returns the roots of the pool's auth component storage |
+| `get_fee_identity` | Returns the fee asset and fee policy roots |
+| `get_registry_identity` | Returns the registry pointer, token keys, fee parameters, and payout root |
 
-`get_registry_identity` returns twelve felts in the order
+`get_registry_identity` returns sixteen felts in the order
 `[prefix, suffix, token0[0..4], token1[0..4], protocol_fee_share_bps,
-lp_fee_bps]`. The registry calls it by foreign procedure invocation at
-registration.
+lp_fee_bps, p2id_root[0..4]]`. The registry calls it by foreign procedure
+invocation at registration.
+
+`get_auth_identity` returns the note allowlist root, the transaction-script
+allowlist root, and the fee schedule root. `get_fee_identity` returns the fee
+asset id, the active fee policy root, and the allowed fee policy roots. They are
+separate procedures because a procedure cannot return six words on the stack.
+The registry compares all six against the values it was created with, because a
+code commitment pins code and not storage.
 
 ## Reserves
 
@@ -128,7 +137,7 @@ A deployed pool account carries four components:
 | Component | Purpose |
 | --- | --- |
 | `port0` | The AMM: reserves, LP supply, fees, protocol pot, price oracle |
-| Basic fungible faucet | The LP token's name, symbol, and decimals, so wallets can render it |
+| Basic fungible faucet | The LP token's name, symbol, and decimals |
 | `CodeInspection` | `get_code_commitment`, which the registry calls over FPI at registration |
 | Network auth | The note-script allowlist and fee schedule the node's network transaction builder reads |
 

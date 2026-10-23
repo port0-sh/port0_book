@@ -15,12 +15,13 @@ buildSwapNote(input: SwapNoteInput): Note
 buildCollectNote(input: CollectNoteInput): Note
 buildRegisterNote(input: RegisterNoteInput): Note
 buildRegistryCollectNote(input: RegistryCollectNoteInput): Note
+buildRegistryConfigNote(input: RegistryConfigNoteInput): Note
 buildFeeSponsorshipNote(input: FeeSponsorshipNoteInput): Note
 
 p2idRoot(): Word4
 noteScript(kind: NoteKind): NoteScript
 POOL_NOTE_KINDS: readonly PoolNoteKind[]  // ["mint","burn","swap","collect"]
-NOTE_KINDS: readonly NoteKind[]           // POOL_NOTE_KINDS plus "register" and "registry-collect"
+NOTE_KINDS: readonly NoteKind[]           // POOL_NOTE_KINDS plus "register", "registry-collect", "registry-config"
 ```
 
 Common input fields are `sender`, `poolId`, `recipient` where applicable,
@@ -38,6 +39,12 @@ asset key per swept asset, so `6 + 4n` felts and no assets.
 `buildRegistryCollectNote` takes `sender`, `registryId`, `assetKeys`, and an
 optional `serial`. The note targets the registry and carries the registry id,
 the serial, and one asset key per swept asset, so `6 + 4n` felts and no assets.
+
+`buildRegistryConfigNote` takes `sender`, `registryId`, and `registerFee`. The
+note targets the registry, carries the registry id, the new fee, and the
+register note's script root, and is accepted only when `sender` is the registry
+admin. The root comes from the compiled register note rather than a constant,
+because the root moves when the registry's interface changes.
 
 `buildFeeSponsorshipNote` takes `sender`, `target`, `featureNote`,
 `feeFaucetId`, `feeAmount`, and optional `reclaimer` (defaults to `sender`) and
@@ -63,7 +70,8 @@ Each function returns `bigint[]` in the exact order the note script asserts.
 
 Account ids inside layouts are `[prefix, suffix]`. The reclaimer in
 `feeSponsorshipStorage` is the exception: it is `[suffix, prefix]`, matching
-`FeeSponsorshipNoteStorage`.
+`FeeSponsorshipNoteStorage`. A collect note carries at most four asset keys; a
+longer list is rejected by the note script.
 
 ## Encoders
 
@@ -139,18 +147,29 @@ the note is never consumed.
 createPoolAccount(client, params): Promise<Account>
 buildPoolAccount(client, params): Promise<Account>
 poolCodeCommitment(client, params): Promise<string>
+poolAuthRoots(client, params): Promise<PoolAuthRoots>
 deployPoolAccount(client, poolId, fundingNoteId, options?): Promise<TransactionSubmitResult>
 createFeeFaucet(client, params): Promise<Account>
+lpFaucetComponent(client, params): Promise<AccountComponent>
 createRegistryAccount(client, params): Promise<Account>
 deployRegistryAccount(client, registryId, fundingNoteId, options?): Promise<TransactionSubmitResult>
+readRegistryRegisterFee(getAccount, registryId): Promise<bigint>
 ```
 
-`CreatePoolAccountParams` is `{ token0Key, token1Key, registryId, lpFeeBps,
-protocolFeeShareBps, p2idRoot?, feeFaucetId, noteFees?, seed? }`.
-`createPoolAccount` builds the pool component from the compiled package and the
-eleven init slots, installs the standard `CodeInspection` component, installs
-the network auth with the fee schedule, and inserts the account into the
-client's local store. It does not deploy.
+`CreatePoolAccountParams` is `{ token0Key, token1Key, token0Symbol, token1Symbol,
+registryId, lpFeeBps, protocolFeeShareBps, p2idRoot?, feeFaucetId, noteFees?,
+seed? }`. `createPoolAccount` builds the pool component from the compiled
+package and the eleven init slots, installs the standard basic fungible faucet
+component so the LP token carries readable metadata (see [account
+components](../contracts/pool.md#account-components)), installs the
+standard `CodeInspection` component, installs the network auth with the fee
+schedule, and inserts the account into the client's local store. It does not
+deploy. The fee schedule defaults every note kind to `NOTE_FEES`.
+
+`poolAuthRoots` returns the auth roots a registry must be created with: the note
+allowlist root, the transaction-script allowlist root, and the fee schedule
+root, plus the fee asset and fee policy roots. The registry compares them
+against every pool it registers.
 
 `poolCodeCommitment` returns the account code commitment as lowercase hex,
 which is the value the registry's `accepted_code_commitments` map must hold. It
@@ -165,11 +184,17 @@ worker-side.
 
 `CreateRegistryAccountParams` is `{ acceptedPoolCodeCommitment, feeFaucetId,
 registerFee, protocolFeeTo, protocolFeeShareBps, allowedLpFeeBps, p2idRoot,
-seed? }`. `createRegistryAccount` seeds `accepted_code_commitments` and
-`allowed_lp_fee_bps`, prices both registry note kinds in the network auth, the
-register note at `max(registerFee, MAX_TX_FEE)` and the registry-collect note at
-`MAX_TX_FEE`, and inserts the account. `deployRegistryAccount` consumes a
-funding note as the first transaction.
+admin, authRoots, seed? }`. `createRegistryAccount` seeds
+`accepted_code_commitments` and `allowed_lp_fee_bps`, stores the expected pool
+auth roots and the admin, and prices the three registry note kinds in the
+network auth from `NOTE_FEES`: the register note at `registerFee`, which
+defaults to `NOTE_FEES.register` when zero, registry-collect at
+`NOTE_FEES["registry-collect"]`, and registry-config at zero, because the
+registry pays that fee from the register fees it holds. `deployRegistryAccount`
+consumes a funding note as the first transaction.
+
+`readRegistryRegisterFee` reads the live register fee from the registry's fee
+schedule, which is authoritative after the admin changes it.
 
 `createFeeFaucet` creates a public fungible faucet. It is not the pool's network
 note fee asset. A pool's `feeFaucetId` must be the chain fee faucet, or the node

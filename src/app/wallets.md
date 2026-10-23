@@ -17,6 +17,13 @@ The package versions are pinned in the app manifest. Keep `@miden-sdk/*` and
 The header shows a Login button until a wallet connects. Afterwards it shows the
 account id. Pressing it opens a menu with one item, Disconnect.
 
+## Sound
+
+A completed swap rings a two-strike ship's bell. The sound is synthesized with
+Web Audio, so nothing loads before the first swap, and the preference is one
+localStorage key. A browser only allows audio after a user gesture, so the audio
+context is opened on the swap click.
+
 ## Utils page
 
 The chain utilities live on their own page at `/utils.html`, in the top
