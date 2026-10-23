@@ -1,13 +1,14 @@
 # Contracts overview
 
-The contracts repository contains nine contracts: two [account
-components](https://docs.miden.xyz/builder/smart-contracts/accounts/) and seven
+The contracts repository contains eleven contracts: three [account
+components](https://docs.miden.xyz/builder/smart-contracts/accounts/) and eight
 [note scripts](https://docs.miden.xyz/builder/smart-contracts/notes/).
 
 | Contract | Kind | Purpose |
 | --- | --- | --- |
 | `port0` | account component | Pool: reserves accounting, LP supply, fee rates, protocol pot, price oracle |
-| `pool-registry` | account component | Accepted pool code commitments, pool set, asset pair index, protocol fee policy |
+| `pool-registry` | account component | Accepted pool code commitments, pool set, asset pair index, protocol fee policy, expected pool storage roots, register fee admin |
+| `network-faucet` | account component | Fixed-supply token faucet: immutable owner, one launch, supply accounting |
 | `mint-note` | note script | Add liquidity |
 | `burn-note` | note script | Remove liquidity |
 | `swap-note` | note script | Trade |
@@ -15,6 +16,7 @@ components](https://docs.miden.xyz/builder/smart-contracts/accounts/) and seven
 | `register-note` | note script | Register a pool in the registry |
 | `registry-collect-note` | note script | Move the registry's whole balance to the protocol account |
 | `registry-config-note` | note script | Change the registry's register fee, admin only |
+| `launch-note` | note script | Mint a network faucet's whole supply to a recipient, once |
 
 ## Pool account components
 
@@ -44,6 +46,8 @@ contracts/
   register-note/            pool registration note script
   registry-collect-note/    registry fee collection note script
   registry-config-note/     register fee configuration note script
+  network-faucet/           fixed-supply token faucet component
+  launch-note/              network faucet launch note script
 integration/                MockChain integration tests and deployment binaries
 ```
 

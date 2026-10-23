@@ -11,7 +11,7 @@ ranks multihop routes over the indexed pools.
 | `/pool.html?id=<poolid>` | `pool.html` | Pool state, swap, add liquidity, remove liquidity |
 | `/create.html` | `create.html` | Deploy a pool and register it |
 | `/about.html` | `about.html` | What port0 is, and the risk notice |
-| `/utils.html` | `utils.html` | One-time mint and send public note |
+| `/utils.html` | `utils.html` | One-time mint, registry admin, and send public note |
 | `/media.html` | `media.html` | Mark, wordmark, colors, type, and the unfurl image |
 
 Every page carries the same parts: the alpha notice as a strip above the

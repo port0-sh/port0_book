@@ -26,6 +26,8 @@ terms are used in this book.
 | Registry share | See protocol share. | |
 | LP fee tier | One of the allowed `lp_fee_bps` values the registry lists. | |
 | Protocol pot | The pool's accrued protocol fees, held in the vault until collected. | |
+| Network faucet | A fixed-supply token faucet that is itself a network account, with an immutable owner and a one-time launch. | [Accounts](https://docs.miden.xyz/reference/protocol/account/) |
+| Launch | The one transaction that mints a network faucet's whole supply. | [Notes](https://docs.miden.xyz/reference/protocol/note) |
 | Network account | An account serviced by the node's transaction builder through a note-script allowlist, with no signing key. | [Network](https://docs.miden.xyz/builder/tools/network) |
 | Network note | A note carrying a `NetworkAccountTarget` attachment, so the node can route it to a network account. | [Notes](https://docs.miden.xyz/builder/smart-contracts/notes/) |
 | FEE_SPONSORSHIP | The note that carries a feature note's consumption fee and is consumed with it. | [Fees](https://docs.miden.xyz/reference/protocol/fees) |

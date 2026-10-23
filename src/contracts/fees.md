@@ -102,7 +102,7 @@ destination, and the cost to the caller, and submits nothing.
 
 Each sweep emits the collect note and a FEE_SPONSORSHIP note for it. Every
 network note kind is priced at the measured schedule: 126 base units for the four
-pool notes, 119 for the two registry notes, and 119 for a token launch, at the
+pool notes, 119 for the register and registry-collect notes, and 119 for a token launch, at the
 current base fee. The prepayment covers the actual transaction fee with the
 pricer's one-verification-cycle margin, which is 7 base units at this base fee.
 That margin stays in the account that consumed the note: a pool's collect sweeps

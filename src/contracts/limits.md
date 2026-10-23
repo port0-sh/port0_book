@@ -74,6 +74,15 @@ The registry accepts `set_register_fee` only when all of these hold:
 A fee of zero, a sender other than the admin, and a foreign script root are
 rejected. No other registry value can be changed through this path.
 
+### Network faucet launch
+
+- The launch note's sender differs from `owner`.
+- The token has already been launched.
+- The configured maximum supply is zero.
+
+A launch is one-way. There is no second mint, no supply change, and no owner
+rotation.
+
 ## Deadline
 
 Every feature note except collect carries a `deadline`, a block timestamp. The

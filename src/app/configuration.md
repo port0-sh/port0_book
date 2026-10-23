@@ -4,12 +4,13 @@ Environment variables are read at build time (`import.meta.env`).
 
 `VITE_NETWORK` selects a per-network defaults table in `src/lib/config.ts`. An
 individual variable overrides its entry, so a deployment sets the network and
-only the values that differ from it. A mainnet build must set
-`VITE_NETWORK=mainnet`.
+only the values that differ from it. `VITE_NETWORK` takes `testnet`, `devnet`,
+`localnet`, or `mainnet`, and an unrecognised value fails the build rather than
+silently pointing a deployment at the wrong chain.
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
-| `VITE_NETWORK` | `testnet` | `testnet` or `mainnet`; selects the defaults below |
+| `VITE_NETWORK` | `testnet` | `testnet`, `devnet`, `localnet`, or `mainnet`; selects the defaults below |
 | `VITE_MIDEN_RPC_URL` | per network | Miden node RPC for on-chain reads |
 | `VITE_CHAIN_FEE_FAUCET_ID` | per network | Faucet of the chain's fee asset |
 | `VITE_PROVER_URL` | per network | `local`, `testnet`, `devnet`, or a remote prover URL |
@@ -25,13 +26,17 @@ only the values that differ from it. A mainnet build must set
 
 ## Networks
 
-| Value | testnet | mainnet |
-| --- | --- | --- |
-| RPC | `https://rpc.testnet.miden.io` | `https://rpc.cedar.miden.io` |
-| Chain fee faucet | `0x4cbdcaffe75f0a317482224dae6436` | `0xe69e6ca6e39df1b10c1e5399399feb` |
-| Prover | `testnet` | `https://tx-prover.cedar.miden.io` |
-| Note transport | `testnet` | `https://transport.cedar.miden.io` |
-| Explorer | `https://testnet.midenscan.com/account` | `https://explorer.cedar.miden.io/account` |
+| Value | testnet | mainnet | devnet | localnet |
+| --- | --- | --- | --- | --- |
+| RPC | `https://rpc.testnet.miden.io` | `https://rpc.cedar.miden.io` | `https://rpc.devnet.miden.io` | `http://localhost:57291` |
+| Chain fee faucet | `0x4cbdcaffe75f0a317482224dae6436` | `0xe69e6ca6e39df1b10c1e5399399feb` | (set explicitly) | (set explicitly) |
+| Prover | `testnet` | `https://tx-prover.cedar.miden.io` | `devnet` | `local` |
+| Note transport | `testnet` | `https://transport.cedar.miden.io` | `devnet` | `local` |
+| Explorer | `https://testnet.midenscan.com/account` | `https://explorer.cedar.miden.io/account` | `https://explorer.devnet.miden.io/account` | (none) |
+
+Each entry carries the chain's own network id, which decides an address's bech32
+prefix, and whether real funds are at stake, which gates the blocking risk
+notice.
 
 The mainnet endpoints were read from the partner network on 2026-10-22. The
 registry id, the pool code commitment, and the protocol fee recipient are

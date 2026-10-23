@@ -17,6 +17,7 @@
 - [Overview](contracts/overview.md)
 - [Pool](contracts/pool.md)
 - [Registry](contracts/registry.md)
+- [Network faucet](contracts/network-faucet.md)
 - [Notes](contracts/notes.md)
 - [Fees](contracts/fees.md)
 - [Limits and failure conditions](contracts/limits.md)

@@ -13,6 +13,7 @@ each note, the assets it carries, and the felts it reads from note storage.
 | register-note | none | registry id (2), pool id (2), asset0 (2), asset1 (2) |
 | registry-collect-note | none | registry id (2), serial (4), one asset key (4) per swept asset |
 | registry-config-note | none | registry id (2), new register fee (1), script root (4) |
+| launch-note | none | faucet id (2), recipient (2), serial (4), tag (1) |
 
 Account ids are two felts, prefix then suffix. A serial is four felts. `deadline`
 is a block timestamp; the note reverts if the pool executes it after that time.
@@ -68,9 +69,14 @@ Changes the price of the register note. The note carries the registry id, the
 new fee in the fee asset's base units, and the register note's script root. The
 registry accepts it only when the note sender equals the `admin` recorded at
 creation, and only for the register note's own schedule entry, so the price of
-permissionless collection cannot be moved through it. Like a pool collect, it is permissionless and the destination is
-fixed in storage. The registry leaves the transaction's own fee in its vault
-when the swept key is the fee asset.
+permissionless collection cannot be moved through it.
+
+## launch-note
+
+Launches a network faucet. The note carries the faucet id, the recipient, a
+serial, and a tag, and no assets. The faucet mints its whole maximum supply once
+and pays it to the recipient as a P2ID note. It accepts the note only when the
+sender equals the faucet's immutable owner and the supply has not been minted.
 
 ## Fee sponsorship
 

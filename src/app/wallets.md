@@ -27,12 +27,13 @@ context is opened on the swap click.
 ## Utils page
 
 The chain utilities live on their own page at `/utils.html`, in the top
-navigation. No wallet is needed to read the page. Both tools act through a
+navigation. No wallet is needed to read the page. All three tools act through a
 wallet, so their buttons stay disabled until one connects.
 
 | Utility | What it does |
 | --- | --- |
-| One-time mint | Creates a public faucet whose whole supply is minted to the wallet in one transaction, with `maxSupply` equal to that supply. Nothing can be minted afterwards. |
+| One-time mint | Creates a network faucet whose whole supply is minted once to the wallet by a launch note, with `maxSupply` equal to that supply and an immutable owner. Nothing can be minted afterwards. |
+| Registry admin | Changes the registry's register fee. It reads the admin and the live fee from chain, refuses a wallet that is not the admin, and emits a `registry-config` note. No sponsorship is attached: the registry prices that note at zero. |
 | Send public note | Sends the chain fee asset through the wallet's own `requestSend` with a public note type, the only path that can target an account that does not exist on chain yet. |
 
 Each tool builds its form in a modal.

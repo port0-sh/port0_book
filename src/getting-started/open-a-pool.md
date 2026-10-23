@@ -37,9 +37,10 @@ creates a fixed-supply faucet and mints the whole supply to the wallet.
 The faucet is created with `maxSupply` equal to the supply, so nothing remains to
 mint afterwards and the whole supply lands in the wallet.
 
-The step creates two transactions and needs 266 base units of USDCX, which the
-wallet sends to the new faucet. The faucet's own first transaction pays its fee
-out of that funding.
+The faucet is a network account, so creating it needs no invitation code on a
+gated network. The deploy is funded with 112 base units of USDCX, the measured
+cost of a faucet deploy consume, and the launch that mints the supply is a second
+transaction paid by the owner's wallet through a sponsorship of 119 base units.
 
 ## 3. Open the pool
 
@@ -85,7 +86,7 @@ worth, because the market starts there.
 
 | Item | Base units of USDCX |
 | --- | --- |
-| Minting a token, when needed | 266 |
+| Minting a token, when needed | 112 plus a 119 launch sponsorship |
 | Deploying the pool | 133 |
 | The register fee | 119 |
 | Network fees per operation | About 119 per swap, about 112 per collect |

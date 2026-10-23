@@ -34,8 +34,9 @@ wallet adapter. Setting `submit: true` sends the request through the
 
 Every operation emits a FEE_SPONSORSHIP note for its feature note. The amount is
 the fee schedule entry for the note kind (`NOTE_FEES`: 126 base units for
-`mint`, `burn`, `swap`, and `collect`; 119 for `register` and
-`registry-collect` at the current base fee), measured on a network-account
+`mint`, `burn`, `swap`, and `collect`; 119 for `register`,
+`registry-collect`, and `launch` at the current base fee; zero for
+`registry-config`), measured on a network-account
 transaction plus the pricer's one-verification-cycle margin. A pool note costs
 the measured amount; the executing account holds it at the epilogue. The
 remainder stays with the account and a later collect sweeps it.

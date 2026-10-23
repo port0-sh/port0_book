@@ -117,6 +117,15 @@ the pool's notes. The chain fee asset is the network's own fee faucet asset,
 USDCX on the testnet. It comes from the network faucet and is not minted by this
 project.
 
+## Network faucet
+
+A launched token is fixed-supply by construction. The faucet records an
+immutable owner and a `launched` flag, and the launch note is accepted only from
+that owner and only once. The standard faucet component's own minting procedure
+is unreachable because the account installs no mint policy, and that procedure
+aborts without one. A launched token therefore cannot be diluted after launch,
+and the owner cannot be replaced.
+
 ## Reporting
 
 Vulnerability reports go to hello@port0.sh. The contact is listed in the

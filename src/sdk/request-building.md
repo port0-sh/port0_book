@@ -16,12 +16,13 @@ buildCollectNote(input: CollectNoteInput): Note
 buildRegisterNote(input: RegisterNoteInput): Note
 buildRegistryCollectNote(input: RegistryCollectNoteInput): Note
 buildRegistryConfigNote(input: RegistryConfigNoteInput): Note
+buildLaunchNote(input: LaunchNoteInput): Note
 buildFeeSponsorshipNote(input: FeeSponsorshipNoteInput): Note
 
 p2idRoot(): Word4
 noteScript(kind: NoteKind): NoteScript
 POOL_NOTE_KINDS: readonly PoolNoteKind[]  // ["mint","burn","swap","collect"]
-NOTE_KINDS: readonly NoteKind[]           // POOL_NOTE_KINDS plus "register", "registry-collect", "registry-config"
+NOTE_KINDS: readonly NoteKind[]           // POOL_NOTE_KINDS plus "register", "registry-collect", "registry-config", "launch"
 ```
 
 Common input fields are `sender`, `poolId`, `recipient` where applicable,
@@ -182,6 +183,11 @@ deploy fails. The pool id is passed to `transactions.consume` as a hex string,
 not as an `AccountId`, because the client re-parses account references
 worker-side.
 
+`buildLaunchNote` takes `sender`, `faucetId`, `recipient`, and optional
+`serial` and `tag`. The note targets a network faucet and carries the 9-felt
+launch layout. The faucet accepts it only from the owner and only before the
+supply is minted.
+
 `CreateRegistryAccountParams` is `{ acceptedPoolCodeCommitment, feeFaucetId,
 registerFee, protocolFeeTo, protocolFeeShareBps, allowedLpFeeBps, p2idRoot,
 admin, authRoots, seed? }`. `createRegistryAccount` seeds
@@ -195,11 +201,30 @@ consumes a funding note as the first transaction.
 
 `readRegistryRegisterFee` reads the live register fee from the registry's fee
 schedule, which is authoritative after the admin changes it.
+`readRegistryAdmin` reads the account allowed to change that fee.
 
-`createFeeFaucet` creates a public fungible faucet. It is not the pool's network
-note fee asset. A pool's `feeFaucetId` must be the chain fee faucet, or the node
-never consumes the pool's notes. Use the helper for application-level faucets,
-such as a fixed-supply token.
+`createFeeFaucet` creates a public fungible faucet for an application that needs
+ongoing minting. A fixed-supply token that mints once is a network faucet:
+
+```ts
+buildNetworkFaucet(client, params: CreateNetworkFaucetParams): Promise<Account>
+createNetworkFaucet(client, params: CreateNetworkFaucetParams): Promise<Account>
+deployNetworkFaucet(client, faucetId, fundingNoteId, options?): Promise<TransactionSubmitResult>
+LAUNCH_FEE: bigint
+
+standardFaucetComponent(client, params): Promise<AccountComponent>
+fungibleFaucetSlots(params): PoolInitSlotDefinition[]
+```
+
+`CreateNetworkFaucetParams` is `{ name, symbol, decimals, maxSupply, owner,
+feeFaucetId, seed? }`. The account carries the `network-faucet` component, the
+standard basic fungible faucet component, and the network auth. `deployNetworkFaucet`
+consumes a funding note as the account's first transaction; the supply is minted
+later by the owner's launch note.
+
+A pool's `feeFaucetId` must be the chain fee faucet, or the node never consumes
+the pool's notes. The SDK's faucet helpers do not change that: the chain fee
+faucet comes from `client.feeFaucetId()`.
 
 ## Discovery
 
