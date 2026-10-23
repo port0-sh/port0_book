@@ -51,20 +51,38 @@ pool produces.
 ### 4. Registry account
 
 ```sh
-cp .env.example .env       # set PORT0_FEE_FAUCET_ID and PORT0_POOL_COMMITMENT
+cp .env.example .env       # fill every required value
 npm run registry:deploy
 ```
 
-The tool is interactive. On first run it creates an operator wallet, prints its
-bech32 address, and polls until the fee asset arrives. It consumes the incoming
-note, then funds the registry with whatever the operator holds above the
-operator transaction fee, capped at `PORT0_FUND`. Send at least 420 base units to
-proceed, which covers the operator's 210 and the registry's first 210. The tool
-claims the incoming note, keeps 210 for its own funding transaction, and sends
-the rest up to `PORT0_FUND`, so funding the registry at the default 1000 needs
-about 1420: the claim fee, the 210 kept, and the 1000 sent. The tool then builds
-the registry with `createRegistryAccount`, funds it, and deploys it, printing
-the registry id. No re-run is needed.
+Nothing that becomes registry policy has a default. `PORT0_FEE_FAUCET_ID`,
+`PORT0_POOL_COMMITMENT`, `PORT0_OPERATOR`, `PORT0_REGISTRY_ADMIN`,
+`PORT0_REGISTER_FEE`, `PORT0_PROTOCOL_FEE_TO`, `PORT0_PROTOCOL_FEE_SHARE_BPS`,
+`PORT0_LP_FEE_TIERS`, `PORT0_STORE`, `MIDEN_RPC_URL`, `PORT0_PROVER`, and
+`PORT0_NOTE_TRANSPORT` are all required, and each is validated before anything is
+spent: account references must parse, the commitment must be 32 bytes, fees must
+be in range.
+
+The deploy then prints every one of those values as it is about to write them,
+with account ids in both hex and bech32, and refuses to continue until the
+deployer types `deploy`. `--yes` skips the prompt for an unattended run. The
+commitment, the protocol recipient, the share, the tiers, and the admin cannot be
+changed after creation, so this screen is the last chance to catch a typo that
+would otherwise cost a registry.
+
+The operator is the keyed account that funds the deployment; its key must be in
+`PORT0_STORE`. The admin is only ever compared as an id, so it can be a wallet
+account whose key never touches the store. Give each deployment its own store, so
+retiring an operator is a directory move.
+
+If the operator is underfunded, the tool prints its bech32 address and polls
+until the fee asset arrives, bounded by `PORT0_WAIT_SECS`. It consumes the
+incoming note, funds the registry with whatever the operator holds above its own
+transaction fee, capped at `PORT0_FUND`, then builds the registry with
+`createRegistryAccount` and deploys it, printing the registry id. No re-run is
+needed. On a network that gates keyed accounts, the operator is the only account
+that needs an allowlist entry: the registry and its pools are network accounts
+and are exempt.
 
 A stored registry is reused only when it accepts the configured pool code
 commitment and admits the registry note kinds. An account that fails either
@@ -78,8 +96,8 @@ npm run registry:set-fee -- <base-units> [--submit]
 
 Without `--submit` the command reads the live fee and reports the change. The
 note is accepted only from the registry's admin, so the caller account
-(`PORT0_OPERATOR`, or the first non-admin account in `PORT0_STORE`) must be that
-admin. The fee is the price of listing a pool, and the registry pays the config
+(`PORT0_OPERATOR`) must be that admin, or the change must be made from the admin
+wallet through the Utils page's Registry admin panel. The fee is the price of listing a pool, and the registry pays the config
 note's own fee from the register fees it holds.
 
 Wait timeout: `PORT0_WAIT_SECS` (default 600). On timeout it prints the address

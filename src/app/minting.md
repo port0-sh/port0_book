@@ -1,19 +1,28 @@
 # Token minting
 
-A fixed-supply token is minted from the Utils page at `/utils.html`, with the
-One-time mint tool. The faucet is created with `maxSupply` equal to the initial
-supply, and the whole supply is minted to the caller's wallet. Nothing remains
-to mint afterwards. The faucet id can fill either token field of the create
-page's pool form.
+A fixed-supply token is launched from the Utils page at `/utils.html`, with the
+One-time mint tool. The faucet is a **network account**, so creating it needs no
+invitation code on a network that gates keyed accounts. It is created with
+`maxSupply` equal to the supply, and one launch mints that whole amount to the
+caller's wallet and records it as the token's supply. Nothing remains to mint
+afterwards, and the launch cannot be repeated. The faucet id can fill either
+token field of the create page's pool form.
+
+The owner is recorded at creation and is immutable: only that account's launch
+note can mint, and it can do so once. The account installs no mint policy, so the
+standard faucet component's own minting procedure is unreachable. A token that
+needs ongoing minting is a different product and uses a regular faucet, which on
+a gated network needs an allowlist entry.
 
 ## Funding
 
 A fresh faucet has an empty vault and cannot pay the fee of its own first
 transaction. The connected wallet sends 0.000266 USDCX to the new faucet, which
-is exactly the two transaction fees it will pay: consume and mint, at 2 x 133
-base units, the measured fee. The faucet's first transaction consumes
-that note, which creates the faucet on chain and pays its fee out of the
-received funds. The supply mint follows as the second transaction.
+covers the two transactions it pays for itself: deploying it by consuming the
+funding note, and launching. The faucet's first transaction consumes that note,
+which creates the faucet on chain and funds it. The launch follows as a second
+transaction: the owner's wallet emits the launch note together with a fee
+sponsorship, which covers that note's price, and the faucet executes it.
 
 ## Validation
 
