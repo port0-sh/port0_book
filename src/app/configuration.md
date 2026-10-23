@@ -21,6 +21,7 @@ only the values that differ from it. A mainnet build must set
 | `VITE_INDEXER_URL` | (empty) | Indexer base URL; empty disables browsing and the pool page |
 | `VITE_PARA_API_KEY` | (empty) | Para API key; empty keeps the Para option disabled |
 | `VITE_PARA_ENVIRONMENT` | `BETA` | Para environment; `PRODUCTION` for production builds |
+| `VITE_BRAND_*` | (see [Branding](overview.md#branding)) | Wordmark, mark text, slogan, and unfurl metadata |
 
 ## Networks
 

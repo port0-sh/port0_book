@@ -58,11 +58,11 @@ npm run registry:deploy
 The tool is interactive. On first run it creates an operator wallet, prints its
 bech32 address, and polls until the fee asset arrives. It consumes the incoming
 note, then funds the registry with whatever the operator holds above the
-transaction fee, capped at `PORT0_FUND`. Send at least 420 base units to
-proceed. The tool claims the incoming note, keeps 119 for its own funding
-transaction, and sends the rest up to `PORT0_FUND`; sending about 1238 funds the
-registry with the default 1000 (claim fee plus the 119 reserve plus 1000). The
-tool then builds
+operator transaction fee, capped at `PORT0_FUND`. Send at least 420 base units to
+proceed, which covers the operator's 210 and the registry's first 210. The tool
+claims the incoming note, keeps 210 for its own funding transaction, and sends
+the rest up to `PORT0_FUND`, so funding the registry at the default 1000 needs
+about 1420: the claim fee, the 210 kept, and the 1000 sent. The tool then builds
 the registry with `createRegistryAccount`, funds it, and deploys it, printing
 the registry id. No re-run is needed.
 

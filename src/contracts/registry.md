@@ -33,7 +33,8 @@ asset pair is `[lo.prefix, lo.suffix, hi.prefix, hi.suffix]`, ordered by
 
 ## Registration
 
-`register(pool_id, asset_0, asset_1)` performs these checks in order:
+`register(pool_id, asset_0, asset_1)` performs these checks, in the order the
+contract runs them:
 
 1. The two assets are not equal.
 2. The pool id is not already registered.
@@ -43,11 +44,13 @@ asset pair is `[lo.prefix, lo.suffix, hi.prefix, hi.suffix]`, ordered by
 6. The pool's token keys match the claimed pair in either order.
 7. The pool's protocol share equals the registry's `protocol_fee_share_bps`.
 8. The pool's LP fee is an entry in `allowed_lp_fee_bps`.
-9. The pool's note allowlist root, transaction-script allowlist root, and fee
-   schedule root equal the values the registry was created with.
-10. The pool's fee asset, active fee policy root, and allowed fee policy roots
-    equal the values the registry was created with.
-11. The pool's payout script root equals the registry's own P2ID root.
+9. The pool's payout script root equals the registry's own P2ID root.
+10. The pool's fee asset equals the registry's expected fee asset.
+11. The pool's active fee policy root equals the expected value.
+12. The pool's allowed fee policy roots equal the expected value.
+13. The pool's note allowlist root equals the expected value.
+14. The pool's transaction-script allowlist root equals the expected value.
+15. The pool's fee schedule root equals the expected value.
 
 It then writes `pools` and `assets_to_pool`. The commitment is read from the
 pool's `CodeInspection::get_code_commitment`, the identity fields from the pool's
@@ -56,14 +59,14 @@ pool's `CodeInspection::get_code_commitment`, the identity fields from the pool'
 The fee manager's items are a second procedure because a procedure cannot return
 six words on the stack.
 
-Check 11 reuses the registry's own `p2id_root`, because both must be the standard
+Check 9 reuses the registry's own `p2id_root`, because both must be the standard
 P2ID script: every payout note a pool creates uses it, so a hostile value would
 run an attacker script when a recipient consumes a payout.
 
-Check 9 is what keeps a pool from carrying the accepted code with an allowlist
-of its own: an admitted note could move the pool's vault out through the
-wallet's `move_asset_to_note`. A registry created without those roots rejects
-every pool.
+Checks 13 to 15 are what keep a pool from carrying the accepted code with an
+allowlist of its own: an admitted note could move the pool's vault out through
+the wallet's `move_asset_to_note`. A registry created without those roots
+rejects every pool.
 
 ## The register fee is adjustable
 
@@ -140,5 +143,13 @@ printed by:
 
 ```sh
 cargo run -p integration --bin registry_roots --release -- <contract-dir>
-cargo run -p integration --bin code_inspection_roots
+cargo run -p integration --bin auth_slot_ids --release
+cargo run -p integration --bin code_inspection_roots --release
+cargo run -p integration --bin standards_roots --release
 ```
+
+`registry_roots` prints the procedure roots a contract exposes,
+`auth_slot_ids` prints the storage slot ids the auth component uses,
+`code_inspection_roots` prints the standards inspection roots, and
+`standards_roots` prints the standard note roots, including the fee sponsorship
+note that `collect` detects.

@@ -2,7 +2,8 @@
 
 The app is a static web application. Each page is a real HTML document with its
 own metadata, its own module entry, and a minimal amount of TypeScript. There is
-no application framework and no client-side router.
+no application framework and no client-side page router. A separate swap router
+ranks multihop routes over the indexed pools.
 
 | Route | File | Purpose |
 | --- | --- | --- |
@@ -28,16 +29,20 @@ Pool ids are canonical account-id hex strings with or without a `0x` prefix.
 
 ## Pool list
 
-The home page lists the pools the indexer serves, 50 per page, polled every 15 s
-while the tab is visible. Each row carries the pair and its short pool id, the
-price of one token0 in token1, both reserves, 24-hour volume in both tokens, the
-LP fee, and the fee yield on a 24 h basis. Rows are
-ordered by pair name so a row keeps its place between refreshes. A filter
-accepts a faucet id, and the Load more control walks the indexer's keyset
-cursor.
+The home page loads every pool the indexer serves, in indexer pages of 200, and
+polls every 15 s while the tab is visible. Each row carries the pair and its
+short pool id, the price of one token0 in token1, both reserves, 24-hour volume
+in both tokens, the LP fee, and the fee yield on a 24 h basis.
+
+Filtering, sorting, and paging run in the browser over the loaded set, so neither
+a filter nor a sort makes another request. The filter matches a symbol, a pair,
+or a faucet id. Sorting is by volume descending by default, and any column can be
+sorted in either direction. The pager offers 10, 25, or 50 rows, defaulting to
+10, and remembers the choice.
 
 The list needs no chain read and no WASM. Prices come from the indexer's
-reserves through the same exact bigint arithmetic the pool page uses.
+reserves through the same exact bigint arithmetic the pool page uses. The swap
+card executes through the SDK, which loads on the first swap.
 
 ## Swap card
 
@@ -109,8 +114,12 @@ The name and slogan are configuration. The two drawings are files.
 | Item | Effect |
 | --- | --- |
 | `VITE_BRAND_NAME` | Wordmark, page titles, `og:site_name`, footer |
+| `VITE_BRAND_MARK_TEXT` | Text form of the mark, used in page titles |
 | `VITE_BRAND_LOGO_TEXT` | Text mark beside the header logo; falls back to the name |
 | `VITE_BRAND_SLOGAN` | One line under the home page name; empty hides it |
+| `VITE_BRAND_TAGLINE` | Unfurl title and image alt text |
+| `VITE_BRAND_DESCRIPTION` | Unfurl description and manifest description |
+| `VITE_BRAND_X_HANDLE` | X account, for `twitter:site` |
 | `src/assets/branding/hero.html` | The home page hero |
 | `src/assets/branding/logo.html` | The mark in the header of the other pages |
 

@@ -21,7 +21,7 @@ Each procedure reverts under the conditions below.
 ### Mint
 
 - The deposit is missing one of the two tokens.
-- A deposited amount is above `MAX_AMOUNT`.
+- A deposit plus its reserve is above `MAX_AMOUNT`.
 - The first deposit mints at most `MINIMUM_LIQUIDITY`.
 - A later deposit mints zero liquidity.
 - The liquidity out is below `min_lp_out`.
@@ -31,7 +31,7 @@ Each procedure reverts under the conditions below.
 - The note carries multiple assets or an asset that is not the LP token.
 - The LP amount is zero.
 - The pool is empty.
-- The amount is above `MAX_AMOUNT`.
+- The amount, a reserve, or the LP supply is above `MAX_AMOUNT`.
 - The burn leaves less than `MINIMUM_LIQUIDITY`.
 - Either payout rounds to zero.
 - A payout is below its minimum.
@@ -61,6 +61,18 @@ fee schedule prices.
 
 A key that pays nothing is a no-op. The note carries at most four asset keys;
 the note script rejects a longer key list.
+
+### Registry config
+
+The registry accepts `set_register_fee` only when all of these hold:
+
+- The note sender equals the `admin` recorded at creation.
+- The new fee is positive.
+- The script root equals the registry's `register_note_root`.
+- The script root already carries a schedule entry with its set marker.
+
+A fee of zero, a sender other than the admin, and a foreign script root are
+rejected. No other registry value can be changed through this path.
 
 ## Deadline
 
