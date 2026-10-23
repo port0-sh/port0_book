@@ -16,9 +16,7 @@ silently pointing a deployment at the wrong chain.
 | `VITE_PROVER_URL` | per network | `local`, `testnet`, `devnet`, or a remote prover URL |
 | `VITE_NOTE_TRANSPORT_URL` | per network | `testnet`, `devnet`, or a remote transport URL, for private notes |
 | `VITE_EXPLORER_URL` | per network | Block explorer base; account ids are appended |
-| `VITE_PROTOCOL_FEE_RECIPIENT` | (empty) | Expected protocol fee recipient; gates pool creation |
 | `VITE_REGISTRY_ID` | (empty) | On-chain pool registry account; empty skips registration |
-| `VITE_REGISTRY_REGISTER_FEE` | `0` | Register note consumption fee, in the registry's fee asset; must match the registry's note fee schedule |
 | `VITE_INDEXER_URL` | (empty) | Indexer base URL; empty disables browsing and the pool page |
 | `VITE_PARA_API_KEY` | (empty) | Para API key; empty keeps the Para option disabled |
 | `VITE_PARA_ENVIRONMENT` | `BETA` | Para environment; `PRODUCTION` for production builds |
@@ -51,10 +49,11 @@ blocking acknowledgement modal on the first visit. Acceptance is stored under
 
 ## Protocol fee recipient
 
-`VITE_PROTOCOL_FEE_RECIPIENT` accepts a hex account id or a bech32 address. It
-gates pool creation on the create page. The pool's actual protocol fee
-destination is `protocol_fee_to` in the registry; the create page reads the
-registry's fee policy and builds the pool with the registry's rate.
+There is no app-side fee recipient. The destination is `protocol_fee_to` in the
+registry, which a pool reads over FPI when it collects, so the address is set once
+at registry creation and the app cannot disagree with it. The create page reads the
+registry's fee policy and builds the pool with the registry's rate; the only gate
+on creating a pool is a connected wallet.
 
 ## Registry
 
@@ -62,8 +61,8 @@ registry's fee policy and builds the pool with the registry's rate.
 create flow emits a register note after the pool is deployed. The register note
 is a network note consumed by the registry account, so registration is
 asynchronous: the wallet confirms emission and the node's transaction builder
-consumes the note in a later block. `VITE_REGISTRY_REGISTER_FEE` must match the
-registry's note fee schedule.
+consumes the note in a later block. The register price comes from the registry's
+own fee schedule, read at creation time, so an admin change needs no rebuild.
 
 ## Indexer
 

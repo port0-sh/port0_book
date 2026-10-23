@@ -19,10 +19,10 @@ account id. Pressing it opens a menu with one item, Disconnect.
 
 ## Sound
 
-A completed swap rings a two-strike ship's bell. The sound is synthesized with
-Web Audio, so nothing loads before the first swap, and the preference is one
-localStorage key. A browser only allows audio after a user gesture, so the audio
-context is opened on the swap click.
+A completed swap rings the ship's bell in `public/bell.mp3`. The toggle sits
+beside the wallet control on every page and its state is the localStorage key
+`port0-app:sound:v1`, off by explicit choice and on otherwise. A browser allows
+audio only after a user gesture, so the swap click primes the player.
 
 ## Utils page
 
