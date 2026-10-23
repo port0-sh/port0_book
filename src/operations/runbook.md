@@ -85,8 +85,14 @@ that needs an allowlist entry: the registry and its pools are network accounts
 and are exempt.
 
 A stored registry is reused only when it accepts the configured pool code
-commitment and admits the registry note kinds. An account that fails either
-check is reported and a fresh registry is deployed instead.
+commitment, admits the registry note kinds, and carries the same permanent policy.
+The confirmation screen states which action the run will take, `reuse 0x…` or
+`create a new registry`, before anything is spent.
+
+To deploy a second registry with the same policy, set `PORT0_NEW_REGISTRY=1`.
+Reuse is the default because a matching registry is usually what a re-run means.
+The variable rather than a flag, because `npm run registry:deploy --new` is
+consumed by npm itself; `npm run registry:deploy -- --new` also works.
 
 ### 5. Register fee
 
