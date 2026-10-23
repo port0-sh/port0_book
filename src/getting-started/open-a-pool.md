@@ -31,7 +31,8 @@ Open [port0.sh/utils.html](https://port0.sh/utils.html) and choose One-time mint
 
 | Field | Rule |
 | --- | --- |
-| Symbol | 3 to 6 uppercase letters. The protocol rejects digits |
+| Symbol | 3 to 12 uppercase letters. The protocol rejects digits |
+| Name | Optional, up to 32 characters; empty uses the symbol |
 | Decimals | 0 to 8 |
 | Supply | the whole supply, minted to your wallet in the same flow |
 
@@ -62,7 +63,7 @@ Submit. Three steps run in order.
 | Deploy | the wallet sends 133 base units of USDCX to the pool, and the app consumes that note as the pool's first transaction | the wallet |
 | Register | a register note goes to the registry, which checks the pool's code commitment, its fee values, and the pair | the wallet, plus the registry's register fee |
 
-The register fee on testnet is 210 base units of USDCX. The create page reads it
+The register fee on testnet is 119 base units of USDCX. The create page reads it
 from the registry and shows it before you submit.
 
 When the third step lands, the page opens the pool's own page.
@@ -87,7 +88,7 @@ worth, because the market will start there.
 | --- | --- |
 | Minting a token, if you need one | 266 |
 | Deploying the pool | 133 |
-| The register fee | 210 |
+| The register fee | 119 |
 | Network fees for each operation | about 119 per swap, about 112 per collect |
 
 A pool created with an existing token costs the deploy and the register fee

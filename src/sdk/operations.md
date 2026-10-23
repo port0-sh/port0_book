@@ -32,14 +32,15 @@ wallet adapter. Setting `submit: true` sends the request through the
 
 ## Sponsorship
 
-Every operation emits a FEE_SPONSORSHIP note for its feature note. The fee is
-floored at `MAX_TX_FEE`, the protocol maximum transaction fee
-(`verification_base_fee * 30`, 210 base units at the current base fee). A pool
-note can cost up to that, and the executing account must hold the actual fee at
-the epilogue, so the prepayment is always enough. The remainder stays with the
-account and a later collect sweeps it.
+Every operation emits a FEE_SPONSORSHIP note for its feature note. The amount is
+the fee schedule entry for the note kind (`NOTE_FEES`: 126 base units for
+`mint`, `burn`, `swap`, and `collect`; 119 for `register` and
+`registry-collect` at the current base fee), measured on a network-account
+transaction plus the pricer's one-verification-cycle margin. A pool note costs
+the measured amount; the executing account holds it at the epilogue. The
+remainder stays with the account and a later collect sweeps it.
 
-`MAX_TX_FEE` is exported from the package, together with `MAX_AMOUNT`,
+`NOTE_FEES` is exported from the package, together with `MAX_AMOUNT`,
 `MINIMUM_LIQUIDITY`, and `FEE_DENOMINATOR`.
 
 ## Parameters

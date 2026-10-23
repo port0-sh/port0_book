@@ -42,7 +42,7 @@ npm run pool:commitment
 ```
 
 Prints the accepted pool code commitment, currently
-`0x8349554fb106b3a989119ea10dddab890c7742dc490c747268b9cd112dd06b3a`. The value
+`0xb3193d87f91e7a694d84de14c2bea7da627d7068d17a53b38a984a1739e0f0cb`. The value
 covers the pool's full component set: the `port0` component, `CodeInspection`,
 the network-account auth, and the fee-policy components. It changes whenever any
 of those change, and the registry must be seeded with the value the deployed
@@ -59,7 +59,10 @@ The tool is interactive. On first run it creates an operator wallet, prints its
 bech32 address, and polls until the fee asset arrives. It consumes the incoming
 note, then funds the registry with whatever the operator holds above the
 transaction fee, capped at `PORT0_FUND`. Send at least 420 base units to
-proceed; `1000 + 210` funds the registry at the default. The tool then builds
+proceed. The tool claims the incoming note, keeps 119 for its own funding
+transaction, and sends the rest up to `PORT0_FUND`; sending about 1238 funds the
+registry with the default 1000 (claim fee plus the 119 reserve plus 1000). The
+tool then builds
 the registry with `createRegistryAccount`, funds it, and deploys it, printing
 the registry id. No re-run is needed.
 
@@ -106,9 +109,10 @@ value disables both.
 
 Prerequisite: the connected wallet holds USDCX. The wallet pays the pool funding
 note and the sponsorship of the network notes it emits. Every note kind is
-priced at the protocol maximum (210 base units at the current base fee), so the
-prepayment always covers the actual charge; the measured emit and swap-execution
-fees are about 119 base units each.
+priced at the measured schedule (126 base units for the pool notes, 119 for the
+registry notes at the current base fee), so the prepayment covers the actual
+charge with a one-base-unit margin; the measured emit and swap-execution fees
+are about 119 base units each.
 
 1. Open `/create.html` and connect the wallet.
 2. Choose the token pair. Either launch a fixed-supply token, which creates a
@@ -205,8 +209,9 @@ Without `--submit` the command is a dry run. It reports what is claimable, where
 it would go, and what the sweep costs the caller, and submits nothing.
 
 Each sweep emits a collect note and a FEE_SPONSORSHIP note for it. The
-sponsorship carries the collect note's prepaid fee, which is the protocol
-maximum (210 base units at the current base fee); the remainder stays in the
+sponsorship carries the collect note's prepaid fee, which is the measured
+schedule price (126 base units for a pool collect, 119 for a registry collect at
+the current base fee); the remainder stays in the
 account and a later sweep collects it. When the swept key is the chain fee
 asset, the contract leaves the transaction's own fee in the vault, so the
 epilogue can pay it. The caller funds the sponsorship.

@@ -11,6 +11,8 @@ port0.sh runs on [Miden](https://docs.miden.xyz/builder/) testnet.
 | Block time | about 3 seconds |
 | Base fee (`verification_base_fee`) | 7 |
 | Maximum transaction fee | 210 base units of USDCX (`7 x 30`) |
+| Pool note schedule price | 126 base units (`mint`, `burn`, `swap`, `collect`) |
+| Registry note schedule price | 119 base units (`register`, `registry-collect`) |
 | Measured swap transaction fee | about 119 base units of USDCX |
 | Measured collect transaction fee | about 112 base units of USDCX |
 

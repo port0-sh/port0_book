@@ -19,7 +19,8 @@ received funds. The supply mint follows as the second transaction.
 
 | Field | Rule |
 | --- | --- |
-| Symbol | 3 to 6 uppercase ASCII letters. The protocol rejects digits. |
+| Symbol | 3 to 12 uppercase ASCII letters. The protocol rejects digits, and its own cap is 12. |
+| Name | Optional display name, up to 32 characters. Empty means the symbol is used; the protocol stores names as UTF-8 within 32 bytes, so accented or emoji names allow fewer characters |
 | Decimals | Integer from 0 to 8 |
 | Initial supply | Entered in tokens, bounded by `MAX_AMOUNT` of `2^57` base units |
 

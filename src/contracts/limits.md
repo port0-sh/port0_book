@@ -50,14 +50,17 @@ Each procedure reverts under the conditions below.
 
 A key that pays nothing is a no-op. A sweep in which every key pays nothing
 consumes the note and moves no value. The procedure reverts only on a failed
-registry read or a malformed payout.
+registry read or a malformed payout. The note carries at most four asset keys;
+the note script rejects a longer key list, which is the most expensive sweep the
+fee schedule prices.
 
 ### Registry collect
 
 - `p2id_root` is unset.
 - The asset key is empty.
 
-A key that pays nothing is a no-op.
+A key that pays nothing is a no-op. The note carries at most four asset keys;
+the note script rejects a longer key list.
 
 ## Deadline
 

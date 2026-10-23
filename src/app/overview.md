@@ -9,14 +9,18 @@ no application framework and no client-side router.
 | `/` | `index.html` | Browse every registered pool from the indexer |
 | `/pool.html?id=<poolid>` | `pool.html` | Pool state, swap, add liquidity, remove liquidity |
 | `/create.html` | `create.html` | Deploy a pool and register it |
-| `/about.html` | `about.html` | What port0 is, and the risks of a testnet |
+| `/about.html` | `about.html` | What port0 is, and the risk notice |
 | `/utils.html` | `utils.html` | One-time mint and send public note |
 | `/media.html` | `media.html` | Mark, wordmark, colors, type, and the unfurl image |
 
-Every page carries the same parts: the testnet notice as a strip above the
-header, dismissed once and remembered under the key that `<html data-notice-key>`
-names, the footer with the copyright year and the social links, and the chart
-attribution. The index
+Every page carries the same parts: the alpha notice as a strip above the
+header, the footer with the copyright year and the social links, and the chart
+attribution. The strip shows the text of the selected network. On testnet it is
+dismissible, and the dismissal is remembered under
+`port0-app:alpha-risk:v1:testnet`. On mainnet the strip is permanent and the
+first visit is gated by a modal that records acceptance under
+`port0-app:alpha-risk:v1:mainnet`; the
+[closed alpha risk notice](alpha-risk.md) carries the terms. The index
 adds the hero drawing, the brand heading under it, a link to the launch page,
 and the slogan.
 
@@ -27,7 +31,7 @@ Pool ids are canonical account-id hex strings with or without a `0x` prefix.
 The home page lists the pools the indexer serves, 50 per page, polled every 15 s
 while the tab is visible. Each row carries the pair and its short pool id, the
 price of one token0 in token1, both reserves, 24-hour volume in both tokens, the
-LP fee, and the fee yield with the window it is annualised over. Rows are
+LP fee, and the fee yield on a 24 h basis. Rows are
 ordered by pair name so a row keeps its place between refreshes. A filter
 accepts a faucet id, and the Load more control walks the indexer's keyset
 cursor.

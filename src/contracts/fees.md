@@ -92,14 +92,26 @@ Without `--submit` the command is a dry run. It reports what is claimable, the
 destination, and the cost to the caller, and submits nothing.
 
 Each sweep emits the collect note and a FEE_SPONSORSHIP note for it. Every
-network note kind is priced at the protocol maximum (210 base units at the
-current base fee), so the prepayment always covers the actual transaction fee;
-the remainder stays in the account and a later collect sweeps it. The caller
-funds the sponsorship.
+network note kind is priced at the measured schedule (126 base units for the
+pool notes, 119 for the registry notes at the current base fee), so the
+prepayment covers the actual transaction fee with the pricer's
+one-verification-cycle margin; the remainder stays in the account and a later
+collect sweeps it. The caller funds the sponsorship.
+
+A collect pays `vault - reserves - hold`, where the hold is the fee-asset reserve
+the transaction's own epilogue charge needs when the transaction is not
+sponsored. Both collects reserve `POOL_COLLECT_FEE_HOLD` (126) for a pool and
+`REGISTRY_COLLECT_FEE_HOLD` (119) for the registry, measured by the fee benchmark
+on the four-key path the tooling sends; a sponsored collect reserves nothing, so
+the whole balance, including an earlier reserve, pays out. The values live in
+`contracts/collect-fee-hold.rs`, which both contracts include, the benchmark
+asserts against, and the SDK reads when it prints a payout estimate.
 
 The registry sweep moves the registry's whole balance, in the chain fee asset;
 that balance is the sponsorship remainder from registers plus any operator
-funding, not a register fee paid to the registry. The pool sweep moves one
+funding, not a register fee paid to the registry. The sweep batches a vault with
+more than four fungible assets into one note per four keys, because the collect
+note script caps its key count. The pool sweep moves one
 pool's protocol pot and any credit above its reserves, in the pool's tokens plus
 any third asset. The caller is an account whose key is in the SDK's client
 store, and it must hold the chain fee asset. The

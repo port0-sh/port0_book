@@ -121,6 +121,34 @@ epilogue still pays. A key that pays nothing is a no-op. The destination is not
 stored in the pool, so it is rotated in one place and read only on the collect
 path.
 
+## Account components
+
+A deployed pool account carries four components:
+
+| Component | Purpose |
+| --- | --- |
+| `port0` | The AMM: reserves, LP supply, fees, protocol pot, price oracle |
+| Basic fungible faucet | The LP token's name, symbol, and decimals, so wallets can render it |
+| `CodeInspection` | `get_code_commitment`, which the registry calls over FPI at registration |
+| Network auth | The note-script allowlist and fee schedule the node's network transaction builder reads |
+
+The pool is its own LP faucet: the contract derives the LP asset id from the
+pool's account id, and the kernel lets an account mint assets whose faucet id is
+its own. The standard faucet component is what gives that faucet a name and
+symbol; without it a wallet shows the LP token as "Unknown". Its metadata is
+fixed when the pool account is built:
+
+| Field | Value |
+| --- | --- |
+| Symbol | `PO` plus up to five A-Z letters of each token's symbol (`POUSDCXAAA`) |
+| Name | `port0 LP <token0>/<token1>` |
+| Decimals | `0`; the app shows LP amounts in raw units |
+| Max supply | The protocol's maximum fungible amount, `2^63 - 2^31` |
+
+`TokenSymbol` accepts uppercase ASCII letters only, so a digit prefix such as
+`P0` is not representable. Because a pool account is a faucet, the app filters
+pool ids out of its pool-token pickers.
+
 ## Configuration
 
 A pool's configuration is its initial storage: `lp_fee_bps`,

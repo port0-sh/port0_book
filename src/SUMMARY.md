@@ -42,6 +42,7 @@
 # App
 
 - [Overview](app/overview.md)
+- [Closed alpha](app/alpha-risk.md)
 - [Configuration](app/configuration.md)
 - [Wallets](app/wallets.md)
 - [Token minting](app/minting.md)
