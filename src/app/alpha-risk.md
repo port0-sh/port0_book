@@ -32,6 +32,7 @@ consumed.
 | --- | --- |
 | Contract defect | Deposits can be locked or lost |
 | Pool economics | A pool's price can move against a deposit; impermanent loss is not a defect |
+| Mintable token listed by a third party | Listing is permissionless and the registry vets no token. A creator can deploy a faucet that mints without limit, list a pool for it, and mint the token to swap out the other side. An LP must check the token's faucet before depositing: the tokens this site launches are fixed-supply and cannot mint again, but that is a property of those faucets, not of every token the pools list |
 | Key lost or stolen | The wallet's assets are unrecoverable |
 | Network halt | Transactions wait; accepted state is unaffected |
 | Fee change | The network's fee parameters can change the cost of a transaction |

@@ -17,12 +17,16 @@ a gated network needs an allowlist entry.
 ## Funding
 
 A fresh faucet has an empty vault and cannot pay the fee of its own first
-transaction. The connected wallet sends 0.000266 USDCX to the new faucet, which
-covers the two transactions it pays for itself: deploying it by consuming the
-funding note, and launching. The faucet's first transaction consumes that note,
-which creates the faucet on chain and funds it. The launch follows as a second
-transaction: the owner's wallet emits the launch note together with a fee
-sponsorship, which covers that note's price, and the faucet executes it.
+transaction. The connected wallet sends it 112 base units, the measured cost of a
+faucet deploy consume, and that transaction consumes the funding note, which
+creates the faucet on chain. A faucet has no sweep, so the funding is exactly the
+measured cost rather than a padded amount. The launch that follows is paid by the
+owner's wallet through a fee sponsorship of 119 base units, the measured launch
+note price. That price carries the pricer's one-cycle margin of 7 base units, so
+the launch leaves exactly that behind: a faucet has no sweep, and the margin is
+the price of never being one cycle short. The launch is a second
+transaction, and the owner's wallet pays for it by emitting the launch note
+together with a fee sponsorship, so the faucet's balance is not what pays it.
 
 ## Validation
 

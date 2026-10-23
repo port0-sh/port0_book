@@ -23,7 +23,13 @@ and deploying a new registry account. The `register` procedure only adds pool id
 and asset pairs to its two maps.
 
 The registry has one admin, fixed at creation, with exactly one power: it can
-change the register fee, which is the price of listing a pool. The call is a
+change the register fee, which is the price of listing a pool. The contract places
+no bound on that fee, deliberately: raising it to an extreme value is the only
+switch the protocol has to stop new registrations, an emergency stop that cannot
+touch funds, listed pools, or trading. The cost of that switch is that a
+compromised admin key can also freeze registration; recovering from that means a
+new registry, which is the same cost as any other policy change, since nothing
+about a registry is mutable. The call is a
 `registry-config` note; the registry requires the note's sender to be the admin,
 requires the target script root to be the register note's own root, and requires
 that entry to already be scheduled. The admin therefore cannot reprice any other

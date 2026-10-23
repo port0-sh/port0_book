@@ -146,8 +146,8 @@ swap-execution fees are about 119 base units each.
 
 1. Open `/create.html` and connect the wallet.
 2. Choose the token pair. Either launch a fixed-supply token, which creates a
-   faucet and funds it with `2 x 133 = 266` base units of USDCX, or enter two
-   existing faucet ids.
+   faucet and funds it with the measured deploy fee, or enter two existing faucet
+   ids.
 3. Choose the LP fee tier: 5, 30, or 100 basis points, whichever the registry
    lists. The protocol's cut is a share of that fee, read from the registry and
    carved out of it, so the swapper pays the LP fee tier and nothing more.

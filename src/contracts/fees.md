@@ -101,11 +101,14 @@ Without `--submit` the command is a dry run. It reports what is claimable, the
 destination, and the cost to the caller, and submits nothing.
 
 Each sweep emits the collect note and a FEE_SPONSORSHIP note for it. Every
-network note kind is priced at the measured schedule (126 base units for the
-pool notes, 119 for the registry notes at the current base fee), so the
-prepayment covers the actual transaction fee with the pricer's
-one-verification-cycle margin; the remainder stays in the account and a later
-collect sweeps it. The caller funds the sponsorship.
+network note kind is priced at the measured schedule: 126 base units for the four
+pool notes, 119 for the two registry notes, and 119 for a token launch, at the
+current base fee. The prepayment covers the actual transaction fee with the
+pricer's one-verification-cycle margin, which is 7 base units at this base fee.
+That margin stays in the account that consumed the note: a pool's collect sweeps
+it, the registry keeps it as the balance that pays its own config-note fee, and a
+faucet has no sweep, so a launch leaves exactly the margin behind as its only
+balance. The caller funds the sponsorship.
 
 A collect pays `vault - reserves - hold`, where the hold is the fee-asset reserve
 the transaction's own epilogue charge needs when the transaction is not
