@@ -1,7 +1,8 @@
-# Closed alpha risk notice
+# Closed alpha notice
 
 port0.sh runs on the Miden partner mainnet as a closed alpha. Balances are real
-funds. The application presents this notice before first use.
+funds. This page states what is at stake and what can fail. The binding terms are
+the [Terms of Service](../legal/terms.md).
 
 ## Custody
 
@@ -44,21 +45,15 @@ Network fees are paid in the chain's fee asset and are not refundable. The
 protocol fee is a share of the LP fee, not an additional charge.
 [Fees](../contracts/fees.md) carries the formula and the current values.
 
-## Data
-
-Pool and registry state is public. The application stores its client state and
-the acceptance of this notice in the browser. It sends no telemetry.
-
 ## Support
 
 Telegram is where the conversation happens: [t.me/port0_sh](https://t.me/port0_sh).
 Email [hello@port0.sh](mailto:hello@port0.sh) for inquiries and vulnerability
 reports. There is no support desk and no recovery service.
 
-## Acceptance
+## Terms and privacy
 
-The application shows this notice on the first visit. On mainnet a modal blocks
-the page until the accept button is pressed; the backdrop and the Esc key do not
-close it. Acceptance is recorded in the browser under
-`port0-app:alpha-risk:v1:mainnet`. On testnet the notice is a dismissible bar
-under `port0-app:alpha-risk:v1:testnet`.
+The [Terms of Service](../legal/terms.md) state the conditions of use, including
+the assumption of risk and the limitation of liability. The
+[Privacy Policy](../legal/privacy.md) states what the Interface stores in the
+browser and what it sends to third parties.

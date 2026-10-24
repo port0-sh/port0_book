@@ -21,7 +21,8 @@ dismissible, and the dismissal is remembered under
 `port0-app:alpha-risk:v1:testnet`. On mainnet the strip is permanent and the
 first visit is gated by a modal that records acceptance under
 `port0-app:alpha-risk:v1:mainnet`; the
-[closed alpha risk notice](alpha-risk.md) carries the terms. The index
+[Terms of Service](../legal/terms.md) carry the terms; the
+[closed alpha notice](alpha-risk.md) carries the alpha facts. The index
 adds the hero drawing, the brand heading under it, a link to the launch page,
 and the slogan.
 

@@ -44,8 +44,10 @@ deployed per network and are not network defaults.
 
 Each page shows the text of the selected network and, on mainnet, opens a
 blocking acknowledgement modal on the first visit. Acceptance is stored under
-`port0-app:alpha-risk:v1:<network>`. The terms are in the
-[closed alpha risk notice](alpha-risk.md).
+`port0-app:alpha-risk:v1:<network>`. The modal and the strip link to the
+[Terms of Service](../legal/terms.md); the alpha facts are in the
+[closed alpha notice](alpha-risk.md), and the
+[Privacy Policy](../legal/privacy.md) lists the stored keys.
 
 ## Protocol fee recipient
 

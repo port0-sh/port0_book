@@ -48,6 +48,11 @@
 - [Wallets](app/wallets.md)
 - [Token minting](app/minting.md)
 
+# Legal
+
+- [Terms of Service](legal/terms.md)
+- [Privacy Policy](legal/privacy.md)
+
 # Operations
 
 - [Runbook](operations/runbook.md)
