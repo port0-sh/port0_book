@@ -107,7 +107,13 @@ wallet through the Utils page's Registry admin panel. The fee is the price of li
 note's own fee from the register fees it holds.
 
 Wait timeout: `PORT0_WAIT_SECS` (default 600). On timeout it prints the address
-and exits. Keys and store: `~/.miden/stores/<PORT0_STORE>/`.
+and exits. Keys and store: `~/.miden/stores/<PORT0_STORE>/`. Use one store per chain, named
+after it (`port0-testnet`, `port0-mainnet`): the scripts stamp the chain a store was
+first used against and refuse to open it for another. One store cannot hold accounts
+from two chains, because the same account id can exist on both with different state.
+
+To keep several environments in one checkout, set `PORT0_ENV_FILE` to the file for
+the run (`.env.mainnet`, `.env.testnet`); otherwise `.env` is loaded.
 
 ### 6. Indexer
 
