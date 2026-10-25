@@ -12,6 +12,10 @@ How to stand up the stack and deploy a pool. Four repositories take part.
 Pin every dependency to the version the testnet runs. The manifests carry the
 current pins.
 
+A preflight run, which verifies a deployment end to end on testnet or mainnet
+against a registry of its own, lives with the scripts it drives: see
+`PREFLIGHT.md` in the `port0_sdk` repository.
+
 ## Part 1: one-time operator setup
 
 ### 1. Contracts
