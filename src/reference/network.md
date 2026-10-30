@@ -21,7 +21,7 @@ USDCX, 6 decimals. Block time is about 3 seconds.
 | Base fee (`verification_base_fee`) | 7 base units |
 | Maximum transaction fee | 210 base units (`7 x 30`) |
 | Pool note schedule price | 126 base units (`mint`, `burn`, `swap`, `collect`) |
-| Registry note schedule price | 119 base units (`register`, `registry-collect`) |
+| Registry note schedule price | 126 base units (`register`, `registry-collect`) |
 | Launch note schedule price | 119 base units (`launch`) |
 | Measured swap transaction | about 119 base units |
 | Measured collect transaction | about 112 base units |

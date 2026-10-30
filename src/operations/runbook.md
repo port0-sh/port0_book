@@ -155,7 +155,7 @@ value disables both.
 
 Prerequisite: the connected wallet holds USDCX. The wallet pays the pool funding
 note and the sponsorship of the network notes it emits. Every note kind is
-priced at the measured schedule (126 base units for the pool notes, 119 for the
+priced at the measured schedule (126 base units for the pool notes, 126 for the
 registry notes at the current base fee), so the prepayment covers the actual
 charge with the pricer's one-verification-cycle margin. The measured emit and
 swap-execution fees are about 119 base units each.
@@ -257,7 +257,7 @@ it would go, and what the sweep costs the caller, and submits nothing.
 
 Each sweep emits a collect note and a FEE_SPONSORSHIP note for it. The
 sponsorship carries the collect note's schedule price (126 base units for a pool
-collect, 119 for a registry collect at the current base fee); the remainder
+collect, 126 for a registry collect at the current base fee); the remainder
 stays in the account and a later sweep collects it. The caller funds the
 sponsorship.
 

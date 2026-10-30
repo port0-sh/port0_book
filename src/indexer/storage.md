@@ -1,7 +1,7 @@
 # Storage and retention
 
-SQLite holds the pool set, token metadata, one row per history bucket, and one
-row per classified activity. History reads do not go through the in-memory
+SQLite holds the pool set, token metadata, one row per history bucket, one row
+per classified activity, and one row per recorded transaction. History reads do not go through the in-memory
 model: the API opens its own read-only connection, and WAL lets it read while
 the poller writes, so neither waits on the other.
 
@@ -22,6 +22,22 @@ resolution periods take an `i64` that cannot overflow.
 The file grows by the measured cost of a row: **360.3 bytes per snapshot** and
 **97.4 bytes per activity**, including their indexes. The figures come from
 200,000 rows of each type inserted into the shipped schema.
+
+## The event log
+
+The `events` table holds one row per transaction that touched a pool: the
+transaction id, the block, the block's timestamp, the kind, and the amounts from
+the pool state read at that block. `exact` marks whether the amounts are that
+transaction's own; `from_block` is the block the state was read from.
+
+The table has no retention window. It is the archive, a row is small, and a
+trade list that forgets last week is not a trade list.
+
+Rows captured live are exact. Rows recovered by the backfill are not: the pool's
+feature notes are erased from the note tree once consumed, and the node serves
+account state for the last 50 blocks only, so a historical transaction's amounts
+cannot be recovered. Such a row carries `exact = 0`, `kind = other`, and zero
+amounts.
 
 ## Retention ladder
 

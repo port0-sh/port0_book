@@ -51,6 +51,13 @@ contract runs them:
 13. The pool's note allowlist root equals the expected value.
 14. The pool's transaction-script allowlist root equals the expected value.
 15. The pool's fee schedule root equals the expected value.
+16. The pool's reserves, LP supply, and protocol pot are all zero
+    (`get_lifecycle`).
+
+The zero check is what keeps a seeded market out of the registry: a pool is
+registered before its first mint, so its price, supply, and pot cannot be chosen
+in advance. It is read by a fifth foreign call because the values live in the
+pool's storage, which the code commitment does not pin.
 
 It then writes `pools` and `assets_to_pool`. The commitment is read from the
 pool's `CodeInspection::get_code_commitment`, the identity fields from the pool's

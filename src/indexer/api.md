@@ -89,6 +89,72 @@ The response is an array of snapshot objects. An unknown resolution returns
 `400`. Without a database the response is an empty array rather than an error:
 the pool itself is still served.
 
+## `GET /pools/{id}/activity`
+
+The pool's price observations and its transactions in one read, newest first.
+There is one row per price change and one per recorded transaction. A transaction
+carries the reserves of the last observation at or before its block, so its row
+can be priced; before the first observation it carries none. A transaction at a
+block an observation also produced sorts above that observation.
+
+| Query | Default | Meaning |
+| --- | --- | --- |
+| `resolution` | `1m` | `1m`, `5m`, `1h`, `6h`, `1d`; sets the observation series |
+| `limit` | `24` | Rows to return, clamped to `1..=200` |
+
+The response is `{ "samples": [...], "activity": [...] }`. `samples` holds every
+bucket of the resolution, for the chart. Each activity row:
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `timestamp` | number | Chain time: the bucket's for an observation, the block's for a transaction |
+| `block` | number | Block of the row |
+| `reserve0`, `reserve1` | string or absent | Reserves of the last observation at or before this row |
+| `trade` | object or absent | The transaction; absent on an observation |
+
+A `trade` carries `kind` (`swap`, `add`, `remove`, `collect`, `other`), `tx_id`,
+and the amounts per token in that token's base units: `volume0`/`volume1` (swap
+input, protocol fee included), `in0`/`in1` (reserves added), `out0`/`out1`
+(reserves paid out), `protocol_fee0`/`protocol_fee1` (pot a collect freed). The
+client names them with the pool's symbols and decimals: a swap reads
+`Swap 1.2k MICO → 4.4k USDCX`, an add or a remove its two sides, a collect the pot
+it freed, and a row the backfill could only identify reads `Unrecorded`.
+
+The client computes the price from the row's reserves and the pool's token
+decimals, so the number is formatted in one place and remains exact.
+
+## `GET /pools/{id}/events`
+
+Returns the pool's recorded transactions, newest first. The block stream carries
+each transaction header, so one row is one transaction: its id, the block, and
+the block's timestamp. The amounts are the pool state's change since the state
+the indexer had recorded, read at the transaction's block; that is the
+transaction's effect unless the block carried more than one of the pool's
+transactions.
+
+| Query | Default | Meaning |
+| --- | --- | --- |
+| `limit` | `100` | Rows to return, clamped to `1..=500` |
+
+The response is an array of event objects. An unknown pool returns `404`. Without
+a database the response is an empty array rather than an error. Transactions
+from before the indexer started are not in the log: the backfill path is not
+implemented.
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `tx_id` | string | Transaction id, hex |
+| `block` | number | Block that carried the transaction |
+| `from_block` | number | Block of the state the delta was measured from |
+| `exact` | boolean | True when the amounts are this transaction's own. False for a backfilled row, which has none, and for a block that carried more than one of the pool's transactions, where the delta is the block's total |
+| `timestamp` | number | The block's timestamp, seconds |
+| `kind` | string | `swap`, `add`, `remove`, `collect`, or `other` |
+| `volume0`, `volume1` | string | Swap input per token, protocol fee included |
+| `in0`, `in1` | string | Reserve0 and reserve1 the transaction added, protocol fee excluded |
+| `out0`, `out1` | string | Reserve0 and reserve1 it paid out |
+| `lp_fee0`, `lp_fee1` | string | LP fee kept per token, the protocol share removed |
+| `protocol_fee0`, `protocol_fee1` | string | Protocol share accrued per token |
+
 ## `POST /pools/{id}/refresh`
 
 Marks one pool due at the next scheduler tick. Returns `202` on acceptance,
@@ -109,7 +175,7 @@ tick, not inline.
 | `reserve0`, `reserve1` | string | The pool's stored reserves; the vault covers these plus the protocol pot |
 | `lp_supply` | string | LP supply |
 | `k` | string | `reserve0 * reserve1` as u128 |
-| `spot_price` | number | `reserve1 / reserve0`, display only |
+| `spot_price` | number | token1 per token0, decimals cancelled: `(reserve1 / 10^d1) / (reserve0 / 10^d0)`, display only |
 | `pot0`, `pot1` | string | Accrued protocol fees |
 | `lp_fee_bps` | number | The pool's LP fee tier |
 | `protocol_fee_share_bps` | number | The pool's protocol share |
@@ -117,6 +183,7 @@ tick, not inline.
 | `first_seen_unix` | number | Wall-clock second the indexer first saw the pool |
 | `last_change_unix` | number | Wall-clock second of the last state change |
 | `volume_24h_0`, `volume_24h_1` | string | Trailing 24 h volume per token |
+| `swaps_24h`, `adds_24h`, `removes_24h`, `collects_24h` | number | Recorded transactions of that kind in the trailing 24 h, counted from the event log; the interval counts of the state series when no database is configured |
 | `lp_fees_24h_0`, `lp_fees_24h_1` | string | Trailing 24 h LP fees per token |
 | `protocol_fees_24h_0`, `protocol_fees_24h_1` | string | Trailing 24 h protocol fees per token |
 | `swaps_24h`, `adds_24h`, `removes_24h`, `collects_24h` | number | Trailing 24 h activity counts |

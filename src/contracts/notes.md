@@ -6,14 +6,21 @@ each note, the assets it carries, and the felts it reads from note storage.
 
 | Note | Assets | Note storage (felts, in order) |
 | --- | --- | --- |
-| mint-note | token0, token1 | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_lp_out` (1) |
-| burn-note | LP token | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_amount0` (1), `min_amount1` (1) |
-| swap-note | token0 or token1 | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_amount_out` (1) |
+| mint-note | token0, token1 | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_lp_out` (1), refund tag (1), reclaimer (2), reclaim height (1) |
+| burn-note | LP token | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_amount0` (1), `min_amount1` (1), refund tag (1), reclaimer (2), reclaim height (1) |
+| swap-note | token0 or token1 | pool id (2), recipient (2), serial (4), tag (1), deadline (1), `min_amount_out` (1), refund tag (1), reclaimer (2), reclaim height (1) |
 | collect-note | none | pool id (2), serial (4), one asset key (4) per swept asset |
 | register-note | none | registry id (2), pool id (2), asset0 (2), asset1 (2) |
 | registry-collect-note | none | registry id (2), serial (4), one asset key (4) per swept asset |
 | registry-config-note | none | registry id (2), new register fee (1), script root (4) |
 | launch-note | none | faucet id (2), recipient (2), serial (4), tag (1) |
+
+A `deadline` of zero makes the trade a spot: the pool fills it or pays the input
+back to the sender in the same attempt, so the note is never left pending. A
+nonzero deadline makes it a limit: the pool leaves the note for a later attempt
+until the deadline, and refunds it at expiry. The refund tag is the sender's
+account-target tag, so the refund note reaches the sender's wallet. The
+reclaimer and reclaim height are committed for the sender-side recovery path.
 
 Account ids are two felts, prefix then suffix. A serial is four felts. `deadline`
 is a block timestamp; the note reverts if the pool executes it after that time.
@@ -36,7 +43,8 @@ MINIMUM_LIQUIDITY` and when either payout rounds to zero.
 
 ## swap-note
 
-Sends one token. The pool pays out the other token, less fees. `min_amount_out`
+Sends one token. The pool pays out the other token, less fees, or refunds the
+input as a P2ID to the sender when the minimum cannot be met. `min_amount_out`
 reverts the trade when the output would be smaller.
 
 ## collect-note

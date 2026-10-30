@@ -72,6 +72,10 @@ reserve1_after)` and requires `root > MINIMUM_LIQUIDITY`. It mints `root` LP
 tokens and retains `MINIMUM_LIQUIDITY = 1000`; the provider receives
 `root - 1000`.
 
+The LP faucet's `token_config` supply records the circulating LP, that is
+`lp_supply - MINIMUM_LIQUIDITY`, and is rewritten on every mint and burn. The
+locked minimum is virtual and is never an asset.
+
 On later deposits the pool mints the smaller of `amount0 * lp_supply / reserve0`
 and `amount1 * lp_supply / reserve1`. The amount of each token used rounds up in
 the pool's favor with `div_ceil`; the remainder returns to the provider.
@@ -80,8 +84,8 @@ the pool's favor with `div_ceil`; the remainder returns to the provider.
 
 For a burn of `amount` LP tokens, the pool returns `amount * reserve0 /
 lp_supply` of token0 and `amount * reserve1 / lp_supply` of token1, then reduces
-`lp_supply`. The burn reverts when `amount > lp_supply - MINIMUM_LIQUIDITY` and
-when either payout rounds to zero.
+`lp_supply`. A burn that asks for more than `lp_supply - MINIMUM_LIQUIDITY`, or
+whose payout rounds to zero, is refunded to the sender instead of executing.
 
 ## Swap
 

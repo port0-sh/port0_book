@@ -16,7 +16,10 @@ subtracts two readings without modular arithmetic.
 
 ## Failure conditions
 
-Each procedure reverts under the conditions below.
+A miss does not abort a spot trade. The pool consumes the note and pays its
+input back to the sender as a P2ID; the reserves and the protocol pot do not
+move. A note with a nonzero deadline is a limit: the pool leaves it pending
+until the deadline, then refunds it. The conditions below are the misses.
 
 ### Mint
 
@@ -85,7 +88,8 @@ rotation.
 
 ## Deadline
 
-Every feature note except collect carries a `deadline`, a block timestamp. The
-pool reverts the note when it executes after that time. A deadline is built
-from the last seen block timestamp plus a margin, so a note does not sit
-unbounded in the pool's input queue.
+Every feature note except collect carries a `deadline`, a block timestamp. A
+deadline of zero is a spot note: the pool fills or refunds it in the same
+attempt. A nonzero deadline is a limit: the pool leaves the note for a later
+attempt while the current block timestamp is below it, and refunds the note at
+or after it. Either way the note is consumed, so none is left without an exit.

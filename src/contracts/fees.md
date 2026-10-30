@@ -80,7 +80,7 @@ fee and moves nothing.
 A collect note carries at most four asset keys. The cap and the fee reserve are
 coupled: each key raises the transaction's cycle count, and the reserve must
 cover the largest note the scripts accept. The measured reserves, at the current
-base fee, are 126 base units for a pool collect and 119 for a registry collect.
+base fee, are 126 base units for a pool collect and 126 for a registry collect.
 
 When the swept key is the chain fee asset, `collect` leaves that reserve in the
 vault for the transaction's own epilogue charge. The reserve applies only when
@@ -102,7 +102,7 @@ destination, and the cost to the caller, and submits nothing.
 
 Each sweep emits the collect note and a FEE_SPONSORSHIP note for it. Every
 network note kind is priced at the measured schedule: 126 base units for the four
-pool notes, 119 for the register and registry-collect notes, and 119 for a token launch, at the
+pool notes, 126 for the register and registry-collect notes, and 119 for a token launch, at the
 current base fee. The prepayment covers the actual transaction fee with the
 pricer's one-verification-cycle margin, which is 7 base units at this base fee.
 That margin stays in the account that consumed the note: a pool's collect sweeps
@@ -113,7 +113,7 @@ balance. The caller funds the sponsorship.
 A collect pays `vault - reserves - hold`, where the hold is the fee-asset reserve
 the transaction's own epilogue charge needs when the transaction is not
 sponsored. Both collects reserve `POOL_COLLECT_FEE_HOLD` (126) for a pool and
-`REGISTRY_COLLECT_FEE_HOLD` (119) for the registry, measured by the fee benchmark
+`REGISTRY_COLLECT_FEE_HOLD` (126) for the registry, measured by the fee benchmark
 on the four-key path the tooling sends.
 
 The registry sweep moves the registry's whole balance of each asset it holds. That

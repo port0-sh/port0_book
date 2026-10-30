@@ -18,6 +18,20 @@ processed block and the cadence keeps polls flowing while it is down, and the
 cadence keeps working if the stream never connects. At 10,000 dormant pools the
 network cost settles at about 3 requests a second instead of 667.
 
+## Transaction capture and backfill
+
+The block stream names the accounts a block changed and carries the transaction
+headers. For every header whose account is a known pool, the indexer reads the
+pool state at that block and writes one `events` row: id, block, block time,
+kind, and the amounts. Reading at the block makes the delta the transaction's
+effect; a read at or below the recorded block is dropped, so a replayed block
+cannot write twice.
+
+A pool's history before the indexer started is filled once per pool by the node's
+`SyncTransactions` endpoint, one page at a time, with the block timestamp read per
+distinct block. Those rows are identities only, for the reason in [Storage and
+retention](storage.md#the-event-log).
+
 ## Registry discovery
 
 The registry's `pools` map is the pool set. The node returns at most 1,000
