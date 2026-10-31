@@ -77,6 +77,14 @@ The response is the summary fields below, plus:
 | `fee_schedule` | array | One `{ root, amount }` per priced note script root |
 | `history` | array | Newest snapshots, default 1m resolution |
 
+## `GET /legacy`
+
+The pools of the legacy registries, read once at the indexer's startup: id,
+registry, both tokens with their symbol and decimals, reserves, LP supply, and the
+fee words. A legacy pool is withdraw-only, so the startup read is the state the
+app shows; the list carries no history because the indexer never polled those
+pools. The response is an array, empty when no legacy registry is configured.
+
 ## `GET /pools/{id}/history`
 
 Returns the pool's sampled history.
@@ -91,37 +99,30 @@ the pool itself is still served.
 
 ## `GET /pools/{id}/activity`
 
-The pool's price observations and its transactions in one read, newest first.
-There is one row per price change and one per recorded transaction. A transaction
-carries the reserves of the last observation at or before its block, so its row
-can be priced; before the first observation it carries none. A transaction at a
-block an observation also produced sorts above that observation.
+The pool's transactions and the chart in one read, newest first. Every row is a
+transaction; a price observation is not a row.
 
 | Query | Default | Meaning |
 | --- | --- | --- |
-| `resolution` | `1m` | `1m`, `5m`, `1h`, `6h`, `1d`; sets the observation series |
+| `resolution` | `1m` | `1m`, `5m`, `1h`, `6h`, `1d`; the chart's bucket size |
 | `limit` | `24` | Rows to return, clamped to `1..=200` |
 
-The response is `{ "samples": [...], "activity": [...] }`. `samples` holds every
-bucket of the resolution, for the chart. Each activity row:
+The response is `{ "samples": [...], "activity": [...], "unrecorded": n }`.
+`samples` holds every bucket of the resolution, for the chart. `unrecorded` is the
+number of recorded transactions the table leaves out: identities with no amounts.
+Each activity row:
 
 | Field | Type | Meaning |
 | --- | --- | --- |
-| `timestamp` | number | Chain time: the bucket's for an observation, the block's for a transaction |
-| `block` | number | Block of the row |
-| `reserve0`, `reserve1` | string or absent | Reserves of the last observation at or before this row |
-| `trade` | object or absent | The transaction; absent on an observation |
+| `timestamp` | number | The block's timestamp, seconds |
+| `block` | number | Block of the transaction |
+| `price` | object or absent | `{ "num", "den" }`: token1 base units per token0 base unit, from the transaction's own amounts. A swap prints its output over the input paid, an add `in1 / in0`, a removal `out1 / out0`; a collect keeps the previous price, a creation has none |
+| `trade` | object | The transaction, the same object `GET /pools/{id}/events` returns |
 
-A `trade` carries `kind` (`swap`, `add`, `remove`, `collect`, `other`), `tx_id`,
-and the amounts per token in that token's base units: `volume0`/`volume1` (swap
-input, protocol fee included), `in0`/`in1` (reserves added), `out0`/`out1`
-(reserves paid out), `protocol_fee0`/`protocol_fee1` (pot a collect freed). The
-client names them with the pool's symbols and decimals: a swap reads
-`Swap 1.2k MICO → 4.4k USDCX`, an add or a remove its two sides, a collect the pot
-it freed, and a row the backfill could only identify reads `Unrecorded`.
-
-The client computes the price from the row's reserves and the pool's token
-decimals, so the number is formatted in one place and remains exact.
+The client names the amounts with the pool's symbols and decimals and scales the
+price by their decimals: a swap reads `Swap 1.2k MICO → 4.4k USDCX`, an add or a
+removal its two sides, a collect the pot it freed, and the pool's creation reads
+`Deploy`. The client does not compute a price itself.
 
 ## `GET /pools/{id}/events`
 
@@ -137,18 +138,18 @@ transactions.
 | `limit` | `100` | Rows to return, clamped to `1..=500` |
 
 The response is an array of event objects. An unknown pool returns `404`. Without
-a database the response is an empty array rather than an error. Transactions
-from before the indexer started are not in the log: the backfill path is not
-implemented.
+a database the response is an empty array rather than an error. The backfill
+fills the log from a pool's creation; the indexer's startup recovery completes
+those rows from their notes and the block bodies that hold them.
 
 | Field | Type | Meaning |
 | --- | --- | --- |
 | `tx_id` | string | Transaction id, hex |
 | `block` | number | Block that carried the transaction |
 | `from_block` | number | Block of the state the delta was measured from |
-| `exact` | boolean | True when the amounts are this transaction's own. False for a backfilled row, which has none, and for a block that carried more than one of the pool's transactions, where the delta is the block's total |
+| `exact` | boolean | True when the amounts are this transaction's own; the startup recovery marks the rows it completes. False only for a row that remains an identity with no amounts, or for a block that carried more than one of the pool's transactions, where the delta is the block's total |
 | `timestamp` | number | The block's timestamp, seconds |
-| `kind` | string | `swap`, `add`, `remove`, `collect`, or `other` |
+| `kind` | string | `swap`, `add`, `remove`, `collect`, `deploy`, or `other` |
 | `volume0`, `volume1` | string | Swap input per token, protocol fee included |
 | `in0`, `in1` | string | Reserve0 and reserve1 the transaction added, protocol fee excluded |
 | `out0`, `out1` | string | Reserve0 and reserve1 it paid out |

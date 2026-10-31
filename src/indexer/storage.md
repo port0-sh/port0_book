@@ -33,11 +33,13 @@ transaction's own; `from_block` is the block the state was read from.
 The table has no retention window. It is the archive, a row is small, and a
 trade list that forgets last week is not a trade list.
 
-Rows captured live are exact. Rows recovered by the backfill are not: the pool's
-feature notes are erased from the note tree once consumed, and the node serves
-account state for the last 50 blocks only, so a historical transaction's amounts
-cannot be recovered. Such a row carries `exact = 0`, `kind = other`, and zero
-amounts.
+Rows captured live are exact. The backfill first writes each transaction as an
+identity; the startup recovery then completes it. The pool's own public output
+notes stay in the block and carry the payouts, and a consumed note's body stays in
+the block that created it, where it is matched to the transaction by the input
+nullifiers in the header. The recovery writes those amounts and marks the row
+`exact = 1`; it marks the transaction that created the pool `deploy`. A row that
+stays an identity keeps `exact = 0`, `kind = other`, and zero amounts.
 
 ## Retention ladder
 

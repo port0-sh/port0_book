@@ -29,8 +29,8 @@ cannot write twice.
 
 A pool's history before the indexer started is filled once per pool by the node's
 `SyncTransactions` endpoint, one page at a time, with the block timestamp read per
-distinct block. Those rows are identities only, for the reason in [Storage and
-retention](storage.md#the-event-log).
+distinct block. The startup recovery completes those rows from their notes; see
+[Storage and retention](storage.md#the-event-log).
 
 ## Registry discovery
 
