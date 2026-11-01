@@ -34,10 +34,9 @@ wallet adapter. Setting `submit: true` sends the request through the
 
 Every operation emits a FEE_SPONSORSHIP note for its feature note. The amount is
 the fee schedule entry for the note kind (`NOTE_FEES`: 126 base units for
-`mint`, `burn`, `swap`, and `collect`; 119 for `register`,
-`registry-collect`, and `launch` at the current base fee; zero for
-`registry-config`), measured on a network-account
-transaction plus the pricer's one-verification-cycle margin. A pool note costs
+`mint`, `burn`, `swap`, `collect`, `register`, and `registry-collect`; 119 for
+`launch` at the current base fee; zero for `registry-config`), measured on a
+network-account transaction plus the pricer's one-verification-cycle margin. A pool note costs
 the measured amount; the executing account holds it at the epilogue. The
 remainder stays with the account and a later collect sweeps it.
 
@@ -49,6 +48,11 @@ size an operator's funding. It is not a note price.
 The collect scripts cap a note at four asset keys. Passing more keys than that
 to `collectFees` produces a note the script rejects; a vault with more fungible
 assets needs one call per four keys.
+
+Each operation sets the note's reclaim height with
+`reclaimHeightFor(client, deadline)`: the chain tip plus 20 blocks for a spot
+note, and for a limit the tip plus the remaining deadline at three-second
+blocks plus 20. The sponsorship carries the same height.
 
 ## Parameters
 

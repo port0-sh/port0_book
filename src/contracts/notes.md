@@ -15,17 +15,20 @@ each note, the assets it carries, and the felts it reads from note storage.
 | registry-config-note | none | registry id (2), new register fee (1), script root (4) |
 | launch-note | none | faucet id (2), recipient (2), serial (4), tag (1) |
 
-A `deadline` of zero makes the trade a spot: the pool fills it or pays the input
-back to the sender in the same attempt, so the note is never left pending. A
-nonzero deadline makes it a limit: the pool leaves the note for a later attempt
-until the deadline, and refunds it at expiry. The refund tag is the sender's
-account-target tag, so the refund note reaches the sender's wallet. The
-reclaimer and reclaim height are committed for the sender-side recovery path.
-
 Account ids are two felts, prefix then suffix. A serial is four felts. `deadline`
-is a block timestamp; the note reverts if the pool executes it after that time.
-The `min_*` fields bound slippage. A collect note carries at most four asset
-keys.
+is a block timestamp. A deadline of zero makes the trade a spot: the pool fills
+it or pays the input back to the sender in the same attempt, so the note is never
+left pending. A nonzero deadline makes it a limit: the pool aborts the attempt
+while the current block timestamp is below it, so the node retries, and refunds
+the note at or after it. The `min_*` fields bound slippage.
+
+The refund tag is the sender's account-target tag, so the refund note reaches the
+sender's wallet. The reclaimer and reclaim height are committed in note storage
+for the sender-side recovery path, which is not implemented; the script reads the
+refund tag.
+
+A mint and a swap note carry 15 felts, a burn note 16. A collect note carries at
+most four asset keys.
 
 ## mint-note
 
@@ -33,19 +36,23 @@ Deposits token0 and token1. The pool mints LP tokens to the recipient. On the
 first mint the pool mints `sqrt(x * y)` LP tokens and retains
 `MINIMUM_LIQUIDITY = 1000` permanently; the provider receives the remainder. If
 the deposited ratio differs from the pool ratio, the pool refunds the excess of
-one token to the recipient.
+one token to the recipient. A deposit that misses, including a wrong asset, an
+expired limit, a failed quote, or fewer LP tokens than `min_lp_out`, is paid back
+to the sender under the refund rule.
 
 ## burn-note
 
 Burns LP tokens. The pool returns a proportional share of both reserves to the
-recipient. The burn reverts when `amount_to_burn > lp_supply -
-MINIMUM_LIQUIDITY` and when either payout rounds to zero.
+recipient. A burn that asks for more than `lp_supply - MINIMUM_LIQUIDITY`, whose
+payout rounds to zero, or whose payout is below its minimum is paid back to the
+sender under the refund rule.
 
 ## swap-note
 
-Sends one token. The pool pays out the other token, less fees, or refunds the
-input as a P2ID to the sender when the minimum cannot be met. `min_amount_out`
-reverts the trade when the output would be smaller.
+Sends one token. The pool pays out the other token, less fees. A trade that
+misses, including an unknown asset, a zero output, an output at or above the
+reserve, or an output below `min_amount_out`, is paid back to the sender under
+the refund rule.
 
 ## collect-note
 
@@ -55,8 +62,8 @@ token1 that is the protocol pot plus any credit outside the reserves, and the
 pot is reset because it was paid; for any other key it is the whole balance, so
 a third asset sent to the pool is recoverable. The note is permissionless: the
 destination is fixed in the registry, so a caller can only flush value toward
-it. When the key is the chain fee asset, the transaction's own fee is left in
-the vault for the epilogue.
+it. When the key is the chain fee asset, the scheduled price of 126 base units
+is left in the vault for the epilogue, unless the transaction is sponsored.
 
 ## register-note
 
@@ -91,7 +98,8 @@ sender equals the faucet's immutable owner and the supply has not been minted.
 A feature note does not carry its own consumption fee. A separate
 FEE_SPONSORSHIP note carries exactly one fungible asset, the fee amount in the
 fee faucet asset, and the feature note id in its storage. The two notes are
-consumed together by the node's transaction builder. The registry notes are
-sponsored like a pool collect, at the schedule price; the admin's config note is
-priced at zero, because the registry pays that fee from the register fees it
-holds.
+consumed together by the node's transaction builder. The sponsorship carries a
+reclaim height, which is required: a sponsorship without one cannot be reclaimed
+if the feature note never lands. The registry notes are sponsored like a pool
+collect, at the schedule price; the admin's config note is priced at zero,
+because the registry pays that fee from the register fees it holds.

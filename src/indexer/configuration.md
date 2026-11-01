@@ -7,10 +7,13 @@ not an error.
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `MIDEN_RPC_URL` | `https://rpc.testnet.miden.io` | Node RPC endpoint |
-| `PORT0_REGISTRY_ID` | required | Registry account id, hex |
+| `PORT0_ACTIVE_REGISTRY_IDS` | required | Exactly one registry id: the one the app trades on and the one fully polled |
+| `PORT0_LEGACY_REGISTRY_IDS` | (empty) | Comma-separated earlier registries, read once for `/legacy` and never polled |
+| `PORT0_REGISTRY_IDS` | (unset) | Single-list fallback: the first id is active, the rest legacy |
+| `PORT0_REGISTRY_ID` | (unset) | Single-registry fallback, used when neither list is set |
 | `INDEXER_LISTEN` | `127.0.0.1:8080` | HTTP listen address. Loopback by default, for an API behind a reverse proxy |
 | `INDEXER_ALLOWED_ORIGINS` | (empty) | Comma-separated origins allowed to read the API cross-origin. Empty means same-origin only; no wildcard is accepted |
-| `POOL_POLL_SECS` | `15` | Scheduler tick in seconds, clamped to `1..=5`; per-pool cadence is internal |
+| `POOL_POLL_SECS` | `5` | Scheduler tick in seconds, clamped to `1..=5`; per-pool cadence is internal |
 | `REGISTRY_POLL_SECS` | `60` | Registry poll interval |
 | `INDEXER_DB` | `port0_indexer.sqlite` | SQLite path; empty or `off` keeps the index in RAM only |
 | `INDEXER_SNAPSHOT_RETENTION` | (empty) | Empty prunes each resolution to its window; `all` keeps every bucket |
@@ -33,6 +36,16 @@ proxy. A malformed entry is logged and dropped.
 The shipped `.env.example` lists the Vite development ports,
 `http://localhost:5173` and `http://localhost:5180`, so a local app can fetch
 the API cross-origin.
+
+## Registries
+
+One registry is active. The indexer polls it for the pool set and polls each of
+its pools. Any number of earlier registries can be listed as legacy: their pool
+count is read once at startup for `/status`, their pools are served by `/legacy`
+for withdrawal, and they are never polled and hold no history.
+
+`PORT0_REGISTRY_IDS` and `PORT0_REGISTRY_ID` are accepted for a single-list
+setup, with the first id active and the rest legacy.
 
 ## Database
 

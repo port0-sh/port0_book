@@ -77,8 +77,8 @@ component carries a note-script allowlist, a fee policy, and the nonce handling.
 The node's transaction builder reads the allowlist to consume notes on the
 account's behalf. There is no signing key.
 
-The registry prices its two admitted note kinds, the register note and the
-registry-collect note, at the measured schedule (119 base units at verification
+The registry prices its admitted note kinds, the register note and the
+registry-collect note, at the scheduled price (126 base units at verification
 base fee 7). Every admitted script root must be priced, because a root the fee
 policy does not price aborts fee estimation and the account's auth procedure
 rejects that note as an input. The allowlist is initial storage, and the

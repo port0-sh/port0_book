@@ -61,10 +61,11 @@ Submission runs three steps in order.
 | --- | --- | --- |
 | Create the pool account | Built locally. The fee rates, the P2ID root, the registry pointer, and the LP token metadata are set at creation and hold for the pool's life | Nothing |
 | Deploy | The wallet sends 133 base units of USDCX to the pool, and the app consumes that note as the pool's first transaction | The wallet |
-| Register | A register note goes to the registry, which checks the pool's code commitment, its fee values, and the pair | The wallet, plus the registry's register fee |
+| Register | A register note goes to the registry, which checks the pool's code commitment, its auth roots, its fee values, its pair, and that the pool is unseeded | The wallet, plus the registry's register fee |
 
-The register fee on testnet is 119 base units of USDCX. The create page reads it
-from the registry and shows it before submission.
+The register fee is set by the registry's admin and is 126 base units of USDCX at
+the current schedule. The create page reads the live price from the registry and
+shows it before submission.
 
 When the third step lands, the page opens the pool's own page.
 
@@ -88,7 +89,7 @@ worth, because the market starts there.
 | --- | --- |
 | Minting a token, when needed | 112 plus a 119 launch sponsorship |
 | Deploying the pool | 133 |
-| The register fee | 119 |
+| The register fee | 126 |
 | Network fees per operation | About 119 per swap, about 112 per collect |
 
 A pool created with an existing token costs the deploy and the register fee

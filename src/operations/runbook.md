@@ -124,14 +124,15 @@ the run (`.env.mainnet`, `.env.testnet`); otherwise `.env` is loaded.
 In the `port0_indexer` checkout:
 
 ```sh
-cp .env.example .env       # set PORT0_REGISTRY_ID to the registry id from step 4
+cp .env.example .env       # set PORT0_ACTIVE_REGISTRY_IDS to the registry id from step 4
 cargo run --release
 ```
 
 Serves `http://127.0.0.1:8080`, loopback by default for an API behind a reverse
-proxy. `GET /status` reports the registry id, the last registry block, and the
-known and fetched pool counts. Pools appear after the registry poll (default
-60 s) and the pool poll (default 15 s).
+proxy. `GET /status` reports the active registry, the last registry block, the
+known and fetched pool counts, the indexer version, and the legacy registries.
+Pools appear after the registry poll (default 60 s) and the pool poll (default
+5 s). Earlier registries go in `PORT0_LEGACY_REGISTRY_IDS` and are read once.
 
 The API answers cross-origin only for the origins in `INDEXER_ALLOWED_ORIGINS`.
 The shipped `.env.example` lists the Vite dev ports, so `npm run dev` at
@@ -283,7 +284,7 @@ that same transaction itself. Funding and payout waits use `PORT0_WAIT_SECS`
 
 | Symptom | Cause and fix |
 | --- | --- |
-| `PORT0_REGISTRY_ID is required` | The indexer has no registry id. Set it in `.env`. |
+| `PORT0_ACTIVE_REGISTRY_IDS or PORT0_REGISTRY_ID is required` | The indexer has no registry id. Set one in `.env`. |
 | `registry response is missing slot pool_registry::pool_registry::pools` | The indexer points at an account that is not the registry. Correct the id. |
 | Pool absent from the home page | The indexer is not running, the registry id is wrong, or the register note has not been consumed by the node's builder yet. Check `GET /status`. |
 | `Pool code commitment not accepted` at registration | The registry was seeded with a stale commitment. Re-run `npm run pool:commitment` and redeploy the registry, or register a pool built with the accepted component set. |

@@ -41,8 +41,10 @@ Returns the indexer state.
 | --- | --- | --- |
 | `registry_id` | string or null | Registry account id, hex |
 | `last_registry_block` | number or null | Last block a registry read covered |
-| `known_pools` | number | Pool ids discovered from the registry |
+| `known_pools` | number | Pool ids discovered from the active registry |
 | `fetched_pools` | number | Pools whose state has been fetched |
+| `version` | string | The indexer's build version |
+| `legacy_registries` | array | `{ registry_id, known_pools }` for each configured legacy registry, read once at startup |
 
 ## `GET /pools`
 

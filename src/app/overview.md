@@ -13,6 +13,7 @@ ranks multihop routes over the indexed pools.
 | `/about.html` | `about.html` | What port0 is, and the risk notice |
 | `/utils.html` | `utils.html` | One-time mint, registry admin, and send public note |
 | `/media.html` | `media.html` | Mark, wordmark, colors, type, and the unfurl image |
+| `/debug.html` | `debug.html` | Wallet edge cases; unlinked, `noindex`, omitted from the mainnet build |
 
 Every page carries the same parts: the alpha notice as a strip above the
 header, the footer with the copyright year and the social links, and the chart
@@ -45,6 +46,16 @@ The list needs no chain read and no WASM. Prices come from the indexer's
 reserves through the same exact bigint arithmetic the pool page uses. The swap
 card executes through the SDK, which loads on the first swap.
 
+Pools from earlier registries come from the indexer's `/legacy`, filtered to the
+app's legacy list, and are appended to the same table: tagged `Unsupported`,
+dimmed, excluded from the stats and the router, and withdraw-only through the SDK
+version that produced their notes. They are shown by default, and a switch hides
+them.
+
+While the table is empty, an ASCII ship loader fills the space. It is composed by
+the program, injected as markup by a Vite plugin, animated from an inline
+bootstrap, and adopted by the module.
+
 ## Swap card
 
 The home page also carries a swap card. It quotes over the indexed pools without
@@ -60,8 +71,10 @@ Execution is one wallet transaction per hop. The pool consumes the swap note and
 emits a P2ID note of the output token to the sender, so the intermediate asset
 has to reach the wallet's vault before the next hop can spend it. The next hop's
 input is the amount the wallet actually received, so a reserve shift between
-hops changes only the final output. A failed hop reports its index, and a retry
-resumes at that hop. Each hop carries its own slippage bound.
+hops changes only the final output. A failed hop reports its index and stage, and
+a retry resumes there. A rejected hop is refunded by the pool, and the page
+recognises the refund note in the wallet and reports it. Each hop carries its own
+slippage bound.
 
 ## Pool page
 
@@ -88,6 +101,16 @@ The pool page leads with the current price of one token0 in token1, computed by
 the contract's own formula against the chain state. Until the first chain read
 returns, the headline is filled from the indexer's reserves with the same ratio
 arithmetic.
+
+Below the chart, an activity table lists the pool's transactions from
+`GET /pools/{id}/activity`: the kind, the price computed from each row's own
+amounts, the exact block, the UTC time, and an explorer link. The count of
+transactions the indexer could not resolve is stated beside it.
+
+The action gate decides the swap, add, and remove state in one module: whether
+the wallet is connected, whether the pool is listed and verified, whether a
+transaction is already held, and the seed-only case of a pool whose price the
+first deposit will set.
 
 ## Pool operations
 
@@ -139,5 +162,6 @@ npm run build      # tsc -b && vite build, output in dist/
 npm run preview    # serve dist/ locally
 ```
 
-The build output is plain static files: six HTML documents, one CSS file, one
-small JS bundle per page, and a shared lazy chunk containing the Miden SDK.
+The build output is plain static files: six public HTML documents plus the debug
+page on networks without real funds, one CSS file, one small JS bundle per page,
+and a shared lazy chunk containing the Miden SDK.

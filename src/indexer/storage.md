@@ -1,8 +1,8 @@
 # Storage and retention
 
 SQLite holds the pool set, token metadata, one row per history bucket, one row
-per classified activity, and one row per recorded transaction. History reads do not go through the in-memory
-model: the API opens its own read-only connection, and WAL lets it read while
+per classified activity, and one row per recorded transaction. History reads do
+not go through the in-memory model: the API opens its own read-only connection, and WAL lets it read while
 the poller writes, so neither waits on the other.
 
 The RAM mirror keeps only the open bucket of each tier, which is all a poll

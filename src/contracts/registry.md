@@ -132,10 +132,10 @@ carry. `allowed_lp_fee_bps` holds the permitted tiers.
 above its reserve to `protocol_fee_to` as a P2ID note. It is permissionless: the
 destination is fixed in storage, so a caller can only flush accumulated value
 toward the protocol. When the key is the chain fee asset, the procedure reserves
-`REGISTRY_COLLECT_FEE_HOLD` (119 base units) for the transaction's own epilogue
+`REGISTRY_COLLECT_FEE_HOLD` (126 base units) for the transaction's own epilogue
 charge unless the transaction carries a fee-sponsorship note, in which case it
-reserves nothing and the whole balance pays out. The value is measured on a
-four-key collect, the shape the sweep tooling sends. The procedure reverts when
+reserves nothing and the whole balance pays out. The value is the scheduled note
+price for a four-key collect, the shape the sweep tooling sends. The procedure reverts when
 `p2id_root` is unset or the asset key is empty, and is a no-op when the payout
 would be zero.
 

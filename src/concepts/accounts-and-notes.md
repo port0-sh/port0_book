@@ -69,7 +69,7 @@ the chain fee asset is USDCX. It comes from the network faucet; it is not
 minted by this project.
 
 The registry prices its note kinds in its network auth at the schedule price,
-119 base units for the register and registry-collect notes, so their
+126 base units for the register and registry-collect notes, so their
 sponsorships cover the actual transaction fee. It prices the admin's config note
 at zero, because the registry pays that fee from the register fees it holds. The
 registry's `collect` also leaves the transaction's own fee reserve in its vault

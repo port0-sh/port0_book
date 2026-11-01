@@ -17,7 +17,12 @@ silently pointing a deployment at the wrong chain.
 | `VITE_NOTE_TRANSPORT_URL` | per network | `testnet`, `devnet`, or a remote transport URL, for private notes |
 | `VITE_EXPLORER_URL` | per network | Block explorer base; account ids are appended |
 | `VITE_REGISTRY_ID` | (empty) | On-chain pool registry account; empty skips registration |
+| `VITE_LEGACY_REGISTRY_IDS` | (empty) | Comma-separated earlier registries whose pools are shown, tagged `Unsupported`, and withdraw-only |
 | `VITE_INDEXER_URL` | (empty) | Indexer base URL; empty disables browsing and the pool page |
+| `VITE_SITE_URL` | `https://port0.sh` | Absolute site origin for canonical and unfurl metadata |
+| `VITE_TRADING_ENABLED` | (empty) | `1` enables transaction building; anything else disables the actions |
+| `VITE_TRUSTED_TOKENS` | per network | Comma-separated assets counted at par with the fee asset, replacing the network list |
+| `VITE_PINNED_POOLS` | (empty) | Comma-separated pool ids shown first, in order |
 | `VITE_PARA_API_KEY` | (empty) | Para API key; empty keeps the Para option disabled |
 | `VITE_PARA_ENVIRONMENT` | `BETA` | Para environment; `PRODUCTION` for production builds |
 | `VITE_BRAND_*` | (see [Branding](overview.md#branding)) | Wordmark, mark text, slogan, and unfurl metadata |
@@ -67,6 +72,19 @@ consumes the note in a later block. The register price comes from the registry's
 own fee schedule, read at creation time, so an admin change needs no rebuild.
 
 ## Indexer
+
+`VITE_LEGACY_REGISTRY_IDS` lists earlier registries. Their pools come from the
+indexer's `/legacy`, filtered to this list, and are appended to the pool table:
+tagged `Unsupported`, dimmed, excluded from the stats and the router, and
+withdraw-only through `@port0.sh/sdk-legacy`, the SDK version that produced their
+notes. The indexer must carry the same ids in `PORT0_LEGACY_REGISTRY_IDS`. Moving
+a replaced registry's id from `VITE_REGISTRY_ID` into this list on both sides is
+the whole migration.
+
+`VITE_TRADING_ENABLED` is a kill switch: without `1`, the pages render and the
+actions stay disabled. `VITE_TRUSTED_TOKENS` sets which assets the protocol
+totals count at par with the fee asset, replacing the network's list.
+`VITE_PINNED_POOLS` orders the head of the pool table.
 
 `VITE_INDEXER_URL` is the application's pool source. The home page lists every
 pool the indexer serves, and the pool page loads its state and configuration

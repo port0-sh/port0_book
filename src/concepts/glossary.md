@@ -26,6 +26,10 @@ terms are used in this book.
 | Registry share | See protocol share. | |
 | LP fee tier | One of the allowed `lp_fee_bps` values the registry lists. | |
 | Protocol pot | The pool's accrued protocol fees, held in the vault until collected. | |
+| Refund | The note's assets returned to its sender as a P2ID note when a spot trade cannot fill. | |
+| Lifecycle | The pool's reserves, LP supply, pot, oracle, and last timestamp, required to be zero at registration. | |
+| Event | One row per pool transaction, recorded by the indexer with its amounts and an exactness flag. | |
+| Legacy registry | An earlier registry whose pools stay visible and withdraw-only. | |
 | Network faucet | A fixed-supply token faucet that is itself a network account, with an immutable owner and a one-time launch. | [Accounts](https://docs.miden.xyz/reference/protocol/account/) |
 | Launch | The one transaction that mints a network faucet's whole supply. | [Notes](https://docs.miden.xyz/reference/protocol/note) |
 | Network account | An account serviced by the node's transaction builder through a note-script allowlist, with no signing key. | [Network](https://docs.miden.xyz/builder/tools/network) |

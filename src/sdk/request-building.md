@@ -48,9 +48,11 @@ admin. The root comes from the compiled register note rather than a constant,
 because the root moves when the registry's interface changes.
 
 `buildFeeSponsorshipNote` takes `sender`, `target`, `featureNote`,
-`feeFaucetId`, `feeAmount`, and optional `reclaimer` (defaults to `sender`) and
-`reclaimHeight` (defaults to `0`, disabled). The note carries exactly one
-`FungibleAsset(feeFaucetId, feeAmount)` and no attachment.
+`feeFaucetId`, `feeAmount`, `reclaimHeight`, and an optional `reclaimer` that
+defaults to `sender`. `reclaimHeight` is required: a sponsorship without one
+cannot be reclaimed if the feature note never lands, so it has no default. The
+note carries exactly one `FungibleAsset(feeFaucetId, feeAmount)` and no
+attachment.
 
 `noteScript(kind)` deserialises the compiled package from
 `src/generated/contracts.ts` once and caches it.
@@ -61,9 +63,9 @@ Each function returns `bigint[]` in the exact order the note script asserts.
 
 | Function | Felts | Layout |
 | --- | --- | --- |
-| `mintNoteStorage` | 11 | pool, recipient, serial, tag, deadline, `minLpOut` |
-| `burnNoteStorage` | 12 | pool, recipient, serial, tag, deadline, `minAmount0`, `minAmount1` |
-| `swapNoteStorage` | 11 | pool, recipient, serial, tag, deadline, `minAmountOut` |
+| `mintNoteStorage` | 15 | pool, recipient, serial, tag, deadline, `minLpOut`, refund tag, reclaimer (2), reclaim height |
+| `burnNoteStorage` | 16 | pool, recipient, serial, tag, deadline, `minAmount0`, `minAmount1`, refund tag, reclaimer (2), reclaim height |
+| `swapNoteStorage` | 15 | pool, recipient, serial, tag, deadline, `minAmountOut`, refund tag, reclaimer (2), reclaim height |
 | `collectNoteStorage` | 6 + 4n | pool, serial, one asset key (4) per swept asset |
 | `registerNoteStorage` | 8 | registry, pool, asset0, asset1 |
 | `registryCollectNoteStorage` | 6 + 4n | registry, serial, one asset key (4) per swept asset |
@@ -202,6 +204,12 @@ consumes a funding note as the first transaction.
 `readRegistryRegisterFee` reads the live register fee from the registry's fee
 schedule, which is authoritative after the admin changes it.
 `readRegistryAdmin` reads the account allowed to change that fee.
+
+`listedRegistryPools(rpc, registryId, poolIds)` asks the node for the `pools`
+map entries of the given ids by account proof, one key per pool, and imports no
+account. `readFaucetMetadata(rpc, faucetId)` reads a faucet's `token_config` the
+same way and returns its symbol and decimals. Both take the RPC client so a page
+keeps one connection.
 
 `createFeeFaucet` creates a public fungible faucet for an application that needs
 ongoing minting. A fixed-supply token that mints once is a network faucet:

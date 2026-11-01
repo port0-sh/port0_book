@@ -44,6 +44,7 @@ slot; the contract derives it from the pool's account id.
 | `get_auth_identity` | Returns the roots of the pool's auth component storage |
 | `get_fee_identity` | Returns the fee asset and fee policy roots |
 | `get_registry_identity` | Returns the registry pointer, token keys, fee parameters, and payout root |
+| `get_lifecycle` | Returns reserves, LP supply, pot, oracle, and last block timestamp for the zero check |
 
 `get_registry_identity` returns sixteen felts in the order
 `[prefix, suffix, token0[0..4], token1[0..4], protocol_fee_share_bps,
@@ -56,6 +57,24 @@ asset id, the active fee policy root, and the allowed fee policy roots. They are
 separate procedures because a procedure cannot return six words on the stack.
 The registry compares all six against the values it was created with, because a
 code commitment pins code and not storage.
+
+`get_lifecycle` returns reserves, LP supply, protocol pot, both oracle
+accumulators, and the last block timestamp as fourteen felts. Registration
+requires every one of them to be zero, so a pool with a seeded price or supply
+cannot be listed.
+
+## Refunds
+
+An asset-carrying note carries a deadline and a refund commitment. A deadline of
+zero is a spot note: the pool fills it or pays the input back to the sender in the
+same attempt. A nonzero deadline is a limit: the pool aborts the attempt before
+the deadline, so the node retries it later, and refunds it at or after the
+deadline when it still cannot fill.
+
+A refund is one P2ID note to the note's sender, tagged with the sender's
+account-target tag. The reserves and the protocol pot do not move. The note
+storage carries the reclaimer and the reclaim height as well; the script reads
+the refund tag, and the sender-side reclaim path is not implemented.
 
 ## Reserves
 
@@ -129,8 +148,9 @@ paid. For any other key it is the whole balance, so a third asset sent to the
 pool is recoverable.
 
 When the key is the chain fee asset, the transaction's own fee is left in the
-vault with `tx::compute_fee`, so the sweep can drain the fee asset and the
-epilogue still pays. A key that pays nothing is a no-op. The destination is not
+vault, so the sweep can drain the fee asset and the epilogue still pays. The
+reserve is the scheduled note price, 126 base units, and a sponsored collect
+reserves nothing. A key that pays nothing is a no-op. The destination is not
 stored in the pool, so it is rotated in one place and read only on the collect
 path.
 

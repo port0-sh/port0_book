@@ -64,6 +64,8 @@ integration/                MockChain integration tests and deployment binaries
    identity by foreign procedure invocation, then records the pool and its asset
    pair.
 4. Liquidity providers emit mint notes and burn notes. Traders emit swap notes.
+   A spot note fills or refunds in the same attempt; a limit note waits for its
+   deadline and refunds at expiry.
 5. The fee recipient emits collect notes against a pool, or registry-collect
    notes against the registry. Both are permissionless.
 

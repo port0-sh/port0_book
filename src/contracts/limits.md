@@ -90,6 +90,7 @@ rotation.
 
 Every feature note except collect carries a `deadline`, a block timestamp. A
 deadline of zero is a spot note: the pool fills or refunds it in the same
-attempt. A nonzero deadline is a limit: the pool leaves the note for a later
-attempt while the current block timestamp is below it, and refunds the note at
-or after it. Either way the note is consumed, so none is left without an exit.
+attempt. A nonzero deadline is a limit: the pool aborts the attempt while the current
+block timestamp is below it, so the note stays pending and the node retries, and
+refunds the note at or after it. A spot note is always consumed; a limit note is
+consumed at or after its deadline.

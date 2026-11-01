@@ -26,8 +26,9 @@ protocol pot; a credit the contract did not create is never a reserve.
 ## Process shape
 
 The process starts the HTTP API, a registry poll loop, a block subscription, and
-a pool scheduler. The registry poll discovers pools. The block subscription
-marks a pool due when a block names it as changed. The scheduler fetches pools
+a pool scheduler. The registry poll discovers pools on the one active registry.
+The block subscription marks a pool due when a block names it as changed and
+records the transaction that touched it. The scheduler fetches pools
 whose own cadence says they are due. A SQLite write cycle persists the newest
 bucket of each tier and the pending activities.
 

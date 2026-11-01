@@ -113,8 +113,8 @@ balance. The caller funds the sponsorship.
 A collect pays `vault - reserves - hold`, where the hold is the fee-asset reserve
 the transaction's own epilogue charge needs when the transaction is not
 sponsored. Both collects reserve `POOL_COLLECT_FEE_HOLD` (126) for a pool and
-`REGISTRY_COLLECT_FEE_HOLD` (126) for the registry, measured by the fee benchmark
-on the four-key path the tooling sends.
+`REGISTRY_COLLECT_FEE_HOLD` (126) for the registry, which is the scheduled note
+price rather than the measured kernel fee.
 
 The registry sweep moves the registry's whole balance of each asset it holds. That
 balance is the register fees the registry has accumulated, in the chain fee
