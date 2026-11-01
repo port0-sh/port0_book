@@ -103,6 +103,9 @@ to the RPC directly. No dev-server proxy is involved.
 
 ## SDK dependency
 
-The app depends on the published `@port0.sh/sdk`, pinned to the exact version
-the deployment is tested against. The [runbook](../operations/runbook.md)
-covers the deployment.
+The app's source depends on the SDK checkout beside it, through the
+`file:../port0_sdk` link; the build records the linked package's version in
+`build-info.json` and the footer. The published `@port0.sh/sdk` carries the same
+source. `@port0.sh/sdk-legacy` is pinned to the published 0.3.4, the version that
+produced the legacy pools' notes. The [runbook](../operations/runbook.md) covers
+the deployment.

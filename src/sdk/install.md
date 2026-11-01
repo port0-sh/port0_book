@@ -3,7 +3,7 @@
 The SDK is published as `@port0.sh/sdk`.
 
 ```sh
-npm install @port0.sh/sdk @miden-sdk/miden-sdk
+npm install @port0.sh/sdk@0.4.0 @miden-sdk/miden-sdk@0.17.6
 ```
 
 The SDK peers on `@miden-sdk/miden-sdk`. Pin the version the testnet runs; a
